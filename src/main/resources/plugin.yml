@@ -1,0 +1,6 @@
+name: MafanaNation
+version: '${project.version}'
+main: me.TahaCheji.Main
+api-version: 1.19
+authors: [ TahaCheji ]
+description: Remake of MafanaNation
