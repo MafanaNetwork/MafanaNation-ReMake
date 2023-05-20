@@ -40,6 +40,7 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <outputFile>C:\Users\tahac\Desktop\MafanaNation-TestServer\plugins\MafanaNation-RM.jar</outputFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -77,8 +78,14 @@
         </dependency>
         <dependency>
             <groupId>com.github.MaskedWasTaken</groupId>
-            <artifactId>MafanaMysqlAPI-Remake</artifactId>
-            <version>1.1</version>
+            <artifactId>MafanaInventoryAPI-ReMake</artifactId>
+            <version>1.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.12</version>
         </dependency>
     </dependencies>
 </project>

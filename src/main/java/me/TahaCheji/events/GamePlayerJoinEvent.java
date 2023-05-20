@@ -10,12 +10,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class GamePlayerJoinEvent implements Listener {
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event){
+    public void onJoin(PlayerJoinEvent event) throws Exception {
         Player player = event.getPlayer();
-        for (GamePlayer gamePlayer : Main.getInstance().getGamePlayers()){
-            if(!gamePlayer.getName().equals(player.getDisplayName())){
-                Main.getInstance().getGamePlayers().add(new GamePlayer(player));
-            }
-        }
+        Main.getInstance().getGamePlayers().add(new GamePlayer(player));
     }
 }

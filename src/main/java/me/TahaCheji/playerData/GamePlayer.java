@@ -1,13 +1,15 @@
 package me.TahaCheji.playerData;
 
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 public class GamePlayer {
 
-    private final Player player;
-    private Inventory inventory;
+    private Player player;
+    private OfflinePlayer offlinePlayer;
+
+    private GamePlayerInventory inventory;
     private String name;
     private int coins;
     private int magic;
@@ -18,9 +20,16 @@ public class GamePlayer {
     private Location location;
 
 
-    public GamePlayer(Player player) {
+    public GamePlayer(Player player) throws Exception {
         this.player = player;
+        setInventory();
         setName();
+    }
+
+    public GamePlayer(OfflinePlayer offlinePlayer) throws Exception {
+        this.offlinePlayer = offlinePlayer;
+        setOfflinePlayerInventory(offlinePlayer);
+        setOfflinePlayerName();
     }
 
     public GamePlayer(Player player, int coins, int magic, int health, int armor, int strength, int mobility) {
@@ -33,8 +42,23 @@ public class GamePlayer {
         this.mobility = mobility;
     }
 
+    public void setInventory() throws Exception {
+        this.inventory = new GamePlayerInventory(this);
+    }
+    public void setOfflinePlayerInventory(OfflinePlayer offlinePlayer) throws Exception {
+        this.inventory = new GamePlayerInventory(offlinePlayer);
+    }
+
+    public GamePlayerInventory getInventory() {
+        return inventory;
+    }
+
     public void setName() {
-        this.name = player.getDisplayName();
+        this.name = player.getName();
+    }
+
+    public void setOfflinePlayerName() {
+        this.name = offlinePlayer.getName();
     }
 
     public String getName() {

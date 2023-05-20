@@ -7,15 +7,22 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.Iterator;
+
 public class GamePlayerLeaveEvent implements Listener {
 
     @EventHandler
-    public void onJoin(PlayerQuitEvent event){
+    public void onJoin(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        for (GamePlayer gamePlayer : Main.getInstance().getGamePlayers()) {
+        Iterator<GamePlayer> iterator = Main.getInstance().getGamePlayers().iterator();
+        while (iterator.hasNext()) {
+            GamePlayer gamePlayer = iterator.next();
+            if (gamePlayer == null) {
+                continue;
+            }
             if (gamePlayer.getName().equals(player.getDisplayName())) {
-                Main.getInstance().getGamePlayers().remove(gamePlayer);
+                iterator.remove();
             }
         }
-        }
+    }
 }
