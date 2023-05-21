@@ -3,6 +3,13 @@ package me.TahaCheji.adminCommand;
 import me.TahaCheji.Inv;
 import me.TahaCheji.InventoryDataHandler;
 import me.TahaCheji.Main;
+import me.TahaCheji.gameItems.Weapons.Sword;
+import me.TahaCheji.gameItems.test;
+import me.TahaCheji.gameUtil.ItemUtil;
+import me.TahaCheji.itemData.GameItem;
+import me.TahaCheji.itemData.GameItemGUI;
+import me.TahaCheji.itemData.GameItemLevel;
+import me.TahaCheji.itemData.GameWeapons;
 import me.TahaCheji.objects.DatabaseInventoryData;
 import me.TahaCheji.playerData.GUI.PlayerInventoryGUI;
 import me.TahaCheji.playerData.GamePlayer;
@@ -13,6 +20,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,27 +28,42 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PlayerInventorySee implements CommandExecutor {
+public class PlayerInventory implements CommandExecutor {
 
     public static List<Player> inventoryPlayer = new ArrayList<>();
     public static List<OfflinePlayer> inventoryOfflinePlayer = new ArrayList<>();
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(label.equalsIgnoreCase("mf")) {
+        if(label.equalsIgnoreCase("mfinv")) {
             Player player = (Player) sender;
+            if(args.length == 0) {
+                player.sendMessage(ChatColor.RED + "[MafanaNation Manager]: Error");
+                return true;
+            }
             if(!player.isOp()){
-                player.sendMessage(ChatColor.RED + "You Do Not Have The Permission To Do This Command");
+                player.sendMessage(ChatColor.RED + "[MafanaNation Manager]: You Do Not Have The Permission To Do This Command");
+                return true;
+            }
+            if(args[0].equalsIgnoreCase("level")) {
+                GameWeapons gameWeapons = ItemUtil.getGameWeapon(((Player) sender).getItemInHand());
+                player.setItemInHand(gameWeapons.getItemLevel().addXP(50, gameWeapons.getGameWeapon()));
+            }
+            if(args[0].equalsIgnoreCase("items")) {
+                new GameItemGUI().getAllItemsGui().open((HumanEntity) sender);
+                return true;
             }
             if(args[0].equalsIgnoreCase("clear")){
                 inventoryPlayer.clear();
                 inventoryOfflinePlayer.clear();
+                player.sendMessage(ChatColor.YELLOW + "[MafanaNation Manager]: You have cleared the cache");
+                return true;
             }
             if (args[0].equalsIgnoreCase("inventory")) {
                 Player commandPlayer = Bukkit.getPlayer(args[1]);
                 if (commandPlayer == null) {
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
                     if (!offlinePlayer.hasPlayedBefore()) {
-                        player.sendMessage("Error: That player does not exist");
+                        player.sendMessage(ChatColor.RED + "[MafanaNation Manager]: That player does not exist");
                         return true;
                     }
                     DatabaseInventoryData data = Inv.getInstance().getInvMysqlInterface().getData(offlinePlayer);

@@ -1,19 +1,17 @@
 package me.TahaCheji.playerData.GUI;
 
 import me.TahaCheji.Main;
-import me.TahaCheji.adminCommand.PlayerInventorySee;
-import org.bukkit.Material;
+import me.TahaCheji.adminCommand.PlayerInventory;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,7 +22,7 @@ public class PlayerInventoryGUIEvent implements Listener {
         Inventory inventory = event.getInventory();
         if (event.getSlot() == 53) {
             event.setCancelled(true);
-            Iterator<Player> playerIterator = PlayerInventorySee.inventoryPlayer.iterator();
+            Iterator<Player> playerIterator = PlayerInventory.inventoryPlayer.iterator();
             while (playerIterator.hasNext()) {
                 Player player = playerIterator.next();
                 if (player == null) {
@@ -44,10 +42,11 @@ public class PlayerInventoryGUIEvent implements Listener {
                     updatePlayerArmor(player, guiArmor);
                     inventory.close();
                     playerIterator.remove();
+                    event.getWhoClicked().sendMessage(ChatColor.YELLOW + "[MafanaNation Manager]: Saved the players inventory");
                 }
             }
 
-            Iterator<OfflinePlayer> offlinePlayerIterator = PlayerInventorySee.inventoryOfflinePlayer.iterator();
+            Iterator<OfflinePlayer> offlinePlayerIterator = PlayerInventory.inventoryOfflinePlayer.iterator();
             while (offlinePlayerIterator.hasNext()) {
                 OfflinePlayer player = offlinePlayerIterator.next();
                 if (player == null) {
@@ -67,6 +66,7 @@ public class PlayerInventoryGUIEvent implements Listener {
                     updatePlayerArmor(player, guiArmor);
                     inventory.close();
                     offlinePlayerIterator.remove();
+                    event.getWhoClicked().sendMessage(ChatColor.YELLOW + "[MafanaNation Manager]: Saved the players inventory");
                     Main.getInstance().getGamePlayers().remove(Main.getInstance().getGamePlayer(player));
                 }
             }

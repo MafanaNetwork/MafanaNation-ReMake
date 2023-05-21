@@ -61,7 +61,7 @@ public class GamePlayerInventory {
             player.getInventory().setArmorContents(inventoryArmor.toArray(new ItemStack[0]));
 
             player.updateInventory(); // Update the player's inventory view
-            player.sendMessage(ChatColor.YELLOW + "[MafanaNation Manager]: Your armor has been updated.");
+            player.sendMessage(ChatColor.GREEN + "[MafanaNation Manager]: Your armor has been updated.");
             return;
         }
         saveOfflineInventory(inventoryArmor, getInventoryArmor(), player);
@@ -79,7 +79,7 @@ public class GamePlayerInventory {
             }
 
             player.updateInventory(); // Update the player's inventory view
-            player.sendMessage(ChatColor.YELLOW + "[MafanaNation Manager]: Your inventory has been updated.");
+            player.sendMessage(ChatColor.GREEN + "[MafanaNation Manager]: Your inventory has been updated.");
             return;
 
         }

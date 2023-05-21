@@ -1,4 +1,4 @@
-package me.TahaCheji.events;
+package me.TahaCheji.gameEvent;
 
 import me.TahaCheji.Main;
 import me.TahaCheji.playerData.GamePlayer;
@@ -14,15 +14,6 @@ public class GamePlayerLeaveEvent implements Listener {
     @EventHandler
     public void onJoin(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        Iterator<GamePlayer> iterator = Main.getInstance().getGamePlayers().iterator();
-        while (iterator.hasNext()) {
-            GamePlayer gamePlayer = iterator.next();
-            if (gamePlayer == null) {
-                continue;
-            }
-            if (gamePlayer.getName().equals(player.getDisplayName())) {
-                iterator.remove();
-            }
-        }
+        Main.getInstance().getGamePlayer(player).onQuit();
     }
 }

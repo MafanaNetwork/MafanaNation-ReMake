@@ -1,4 +1,4 @@
-depend: [MafanaInventoryAPI]
+depend: [MafanaInventoryAPI, NBTAPI]
 name: MafanaNation
 version: '${project.version}'
 main: me.TahaCheji.Main
@@ -8,3 +8,4 @@ description: Remake of MafanaNation
 
 commands:
   mf:
+  mfinv:
