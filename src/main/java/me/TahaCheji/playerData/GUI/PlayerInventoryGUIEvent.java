@@ -1,7 +1,7 @@
 package me.TahaCheji.playerData.GUI;
 
 import me.TahaCheji.Main;
-import me.TahaCheji.adminCommand.PlayerInventory;
+import me.TahaCheji.adminCommand.PlayerInventoryAdmin;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -22,7 +22,7 @@ public class PlayerInventoryGUIEvent implements Listener {
         Inventory inventory = event.getInventory();
         if (event.getSlot() == 53) {
             event.setCancelled(true);
-            Iterator<Player> playerIterator = PlayerInventory.inventoryPlayer.iterator();
+            Iterator<Player> playerIterator = PlayerInventoryAdmin.inventoryPlayer.iterator();
             while (playerIterator.hasNext()) {
                 Player player = playerIterator.next();
                 if (player == null) {
@@ -46,7 +46,7 @@ public class PlayerInventoryGUIEvent implements Listener {
                 }
             }
 
-            Iterator<OfflinePlayer> offlinePlayerIterator = PlayerInventory.inventoryOfflinePlayer.iterator();
+            Iterator<OfflinePlayer> offlinePlayerIterator = PlayerInventoryAdmin.inventoryOfflinePlayer.iterator();
             while (offlinePlayerIterator.hasNext()) {
                 OfflinePlayer player = offlinePlayerIterator.next();
                 if (player == null) {

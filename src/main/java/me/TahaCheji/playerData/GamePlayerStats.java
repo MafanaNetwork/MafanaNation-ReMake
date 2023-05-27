@@ -1,19 +1,39 @@
 package me.TahaCheji.playerData;
 
-import me.TahaCheji.gameUtil.ItemUtil;
 import me.TahaCheji.gameUtil.NBTUtils;
-import me.TahaCheji.itemData.GameItem;
-import org.bukkit.Material;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class GamePlayerStats {
 
     private final GamePlayer gamePlayer;
-    private int magic = 0;
-    private int health = 0;
-    private int armor = 0;
-    private int strength = 0;
-    private int mobility = 0;
+
+    private int manaRegenAmount = 2; // Amount of mana regenerated per interval
+
+    private int healthRegenAmount = 2; // Amount of health regenerated per interval
+
+    private final int baseMagic = 50;
+    private int magic = baseMagic;
+    private int maxMagic;
+
+    private final int baseHealth = 50;
+    private int health = baseHealth;
+    private int maxHealth;
+
+    private final int baseArmor = 25;
+    private int armor = baseArmor;
+
+    private final int baseStrength = 25;
+    private int strength = baseStrength;
+
+    private final int baseMobility = 25;
+    private int mobility = baseMobility;
+
 
 
     public GamePlayerStats(GamePlayer gamePlayer) {
@@ -39,17 +59,19 @@ public class GamePlayerStats {
         }
 
         if (heldItem != null && !heldItem.getType().isAir()) {
-            setMagic(NBTUtils.getInt(heldItem, "ItemWeaponMagic") + armorMagic);
-            setHealth(NBTUtils.getInt(heldItem, "ItemWeaponHealth") + armorHealth);
-            setArmor(NBTUtils.getInt(heldItem, "ItemWeaponArmor") + armorArmor);
-            setStrength(NBTUtils.getInt(heldItem, "ItemWeaponStrength") + armorStrength);
-            setMobility(NBTUtils.getInt(heldItem, "ItemWeaponMobility") + armorMobility);
+            setArmor(NBTUtils.getInt(heldItem, "ItemWeaponArmor") + armorArmor + baseArmor);
+            setStrength(NBTUtils.getInt(heldItem, "ItemWeaponStrength") + armorStrength + baseStrength);
+            setMobility(NBTUtils.getInt(heldItem, "ItemWeaponMobility") + armorMobility + baseMobility);
+
+            setMaxHealth(NBTUtils.getInt(heldItem, "ItemWeaponHealth") + armorHealth + baseHealth);
+            setMaxMagic(NBTUtils.getInt(heldItem, "ItemWeaponMagic") + armorMagic  + baseMagic);
         } else {
-            setMagic(armorMagic);
-            setHealth(armorHealth);
-            setArmor(armorArmor);
-            setStrength(armorStrength);
-            setMobility(armorMobility);
+            setArmor(armorArmor + baseArmor);
+            setStrength(armorStrength + baseStrength);
+            setMobility(armorMobility + baseMobility);
+
+            setMaxHealth(armorHealth + baseHealth);
+            setMaxMagic(armorMagic + baseMagic);
         }
     }
 
@@ -59,6 +81,144 @@ public class GamePlayerStats {
         armor = 0;
         strength = 0;
         mobility = 0;
+    }
+
+    public void actionBar(GamePlayer player) {
+        String s = ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + "⚔" + gamePlayer.getGamePlayerStats().getStrength() + ChatColor.DARK_GRAY + " - " +
+                ChatColor.RED + "❤" + gamePlayer.getGamePlayerStats().getHealth() + "/" + gamePlayer.getGamePlayerStats().getMaxHealth() + ChatColor.DARK_GRAY + " - " +
+                ChatColor.YELLOW + "⛨" + gamePlayer.getGamePlayerStats().getArmor() + ChatColor.DARK_GRAY + " - " +
+                ChatColor.BLUE + "[M]" + gamePlayer.getGamePlayerStats().getMagic() + "/" + gamePlayer.getGamePlayerStats().getMaxMagic() + ChatColor.DARK_GRAY + " - " +
+                ChatColor.DARK_GREEN + "〰" + gamePlayer.getGamePlayerStats().getMobility() + ChatColor.DARK_GRAY + "]" ;
+        player.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(s));
+    }
+
+    public void regenerateHealth() {
+        if (health < maxHealth) {
+            health = Math.min(health + healthRegenAmount, maxHealth);
+        } else if (health > maxHealth) {
+            health = maxHealth;
+        }
+    }
+
+    public void regenerateMana() {
+        if (magic < maxMagic) {
+            magic = Math.min(magic + manaRegenAmount, maxMagic);
+        } else if (magic > maxMagic) {
+            magic = maxMagic;
+        }
+    }
+
+    public int getPlayerDamageStrength(int armor) {
+        double strength = getStrength();
+        double scalingFactor = 0.5; // 50% reduction
+
+        double scaledStrength = strength * scalingFactor;
+
+        double damageReduction = armor / 5.0;
+        double finalDamage = Math.max(0, scaledStrength - damageReduction);
+        int damage = (int) finalDamage;
+
+        return damage;
+    }
+
+    public int getPlayerDamageMagic(int armor, int abilityDamage) {
+        double strength = getMaxMagic();
+        double scalingFactor = 0.5;
+        double scaledStrength = strength * scalingFactor;
+        double scaledAbilityDamage = abilityDamage * 0.5;
+        double combinedStrength = scaledStrength + scaledAbilityDamage;
+        double damageReduction = armor / 5.0;
+        double finalDamage = Math.max(0, combinedStrength - damageReduction);
+        int damage = (int) finalDamage;
+
+        return damage;
+    }
+
+    public int playerGetDamage(int incomingDamage) {
+        double strength = incomingDamage;
+        double scalingFactor = 0.5; // Scaling factor for strength
+        double defenseScalingFactor = 0.35; // Scaling factor for defense
+
+        double scaledStrength = strength * scalingFactor;
+
+        double damageReduction = getArmor() / 5.0 * defenseScalingFactor;
+        double finalDamage = Math.max(0, scaledStrength - damageReduction);
+        int damage = (int) Math.ceil(finalDamage); // Use Math.ceil to round up the damage
+
+        // Calculate remaining health
+        int remainingHealth = (int) (gamePlayer.getPlayer().getHealth() - damage);
+        remainingHealth = Math.max(remainingHealth, 0); // Ensure remaining health is not negative
+
+        return remainingHealth;
+    }
+
+    public void setMobilityStats() {
+        Player player = gamePlayer.getPlayer();
+        double mobility = getMobility();
+
+        if (mobility > 25) {
+            double walkSpeed = 0.3 + (mobility * 0.001);
+            int jumpBoostLevel = (int) (mobility / 75.0);
+
+            player.setWalkSpeed((float) walkSpeed);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, jumpBoostLevel, false, false));
+        } else {
+            player.setWalkSpeed((float) 0.3);
+            player.removePotionEffect(PotionEffectType.JUMP);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    public int getBaseArmor() {
+        return baseArmor;
+    }
+
+    public int getBaseHealth() {
+        return baseHealth;
+    }
+
+    public int getBaseMagic() {
+        return baseMagic;
+    }
+
+    public int getBaseMobility() {
+        return baseMobility;
+    }
+
+    public int getBaseStrength() {
+        return baseStrength;
+    }
+
+    public int getHealthRegenAmount() {
+        return healthRegenAmount;
+    }
+
+    public int getManaRegenAmount() {
+        return manaRegenAmount;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getMaxMagic() {
+        return maxMagic;
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public void setMaxMagic(int maxMagic) {
+        this.maxMagic = maxMagic;
     }
 
     public void setMagic(int magic) {

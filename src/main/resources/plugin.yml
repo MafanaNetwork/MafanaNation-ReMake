@@ -7,5 +7,7 @@ authors: [ TahaCheji ]
 description: Remake of MafanaNation
 
 commands:
-  mf:
+  mfcoin:
   mfinv:
+  mfitem:
+  mfmob:

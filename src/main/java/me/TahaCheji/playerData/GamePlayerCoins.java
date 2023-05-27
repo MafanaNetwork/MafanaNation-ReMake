@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class GamePlayerCoins extends MySQL {
+
     public GamePlayerCoins() {
         super("localhost", "3306", "mafanation", "root", "");
     }

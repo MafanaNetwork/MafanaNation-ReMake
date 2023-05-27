@@ -15,15 +15,15 @@ import java.util.Objects;
 public class PlayerCoinAdmin implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(label.equalsIgnoreCase("mf")){
+        if(label.equalsIgnoreCase("mfcoin")){
             Player player = (Player) sender;
             if(args.length == 0) {
                 player.sendMessage(ChatColor.RED + "[MafanaNation Manager]: Error");
                 return true;
             }
             if(args[0].equalsIgnoreCase("coins")) {
-                if(args.length != 3) {
-                    player.sendMessage(ChatColor.RED + "[MafanaNation Manager]: /mf coins [add/remove/balance] [playername]");
+                if(args.length != 4) {
+                    player.sendMessage(ChatColor.RED + "[MafanaNation Manager]: /mf coins [add/remove/balance] [playername] [ammount]");
                 }
                 if(args[1].equalsIgnoreCase("add")) {
                     Player commandPlayer = Bukkit.getPlayer(args[2]);
@@ -46,7 +46,12 @@ public class PlayerCoinAdmin implements CommandExecutor {
                     Main.getInstance().getPlayerCoins().removeCoins(commandPlayer, Integer.parseInt(args[3]));
                 }
                 if(args[1].equalsIgnoreCase("balance")) {
-
+                    Player commandPlayer = Bukkit.getPlayer(args[2]);
+                    if(commandPlayer == null) {
+                        player.sendMessage(ChatColor.GREEN + "" + Main.getInstance().getPlayerCoins().getCoins(commandPlayer));
+                        return false;
+                    }
+                    player.sendMessage(ChatColor.GREEN + "" + Main.getInstance().getPlayerCoins().getCoins(player));
                 }
             }
         }

@@ -1,8 +1,11 @@
 package me.TahaCheji.itemData;
 
+import me.TahaCheji.Main;
+import me.TahaCheji.gameUtil.ItemUtil;
 import me.TahaCheji.gameUtil.NBTUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -14,6 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class GameBow extends GameItem{
 
@@ -21,9 +25,11 @@ public class GameBow extends GameItem{
     public int mobility;
     public int attackSpeed;
     public List<String> lore;
+    private String bowUUID;
 
     public GameBow(String name, Material material, ItemType itemType, ItemRarity itemRarity) {
         super(name, material, itemType, itemRarity);
+        this.bowUUID = UUID.randomUUID().toString();
     }
 
     public ItemStack getGameBow() {
@@ -37,81 +43,31 @@ public class GameBow extends GameItem{
         itemStack = NBTUtils.setInt(itemStack, "ItemWeaponStrength", strength);
         itemStack = NBTUtils.setInt(itemStack, "ItemWeaponMobility", mobility);
         itemStack = NBTUtils.setInt(itemStack, "ItemWeaponAttackSpeed", attackSpeed);
+        itemStack = NBTUtils.setString(itemStack, "GameBowUUID", getBowUUID());
         return itemStack;
+    }
+
+    public GameBow createNewInstance() throws InstantiationException, IllegalAccessException {
+        GameBow game = this.getClass().newInstance();
+        Main.getInstance().getGameBows().add(game);
+        game.setBowUUID(getBowUUID());
+        return game;
+    }
+
+    public void setLore(List<String> lore) {
+        this.lore = lore;
+    }
+
+    public void setBowUUID(String bowUUID) {
+        this.bowUUID = bowUUID;
+    }
+
+    public String getBowUUID() {
+        return bowUUID;
     }
 
     public void setLore(String... lore) {
         this.lore = Arrays.asList(lore);
-    }
-
-    @Override
-    public void onItemStackCreate(ItemStack var1) {
-
-    }
-
-    @Override
-    public void onItemHoldAction(Player var1, ItemStack var2) {
-
-    }
-
-    @Override
-    public boolean leftClickAirAction(Player var1, ItemStack var2) {
-        return false;
-    }
-
-    @Override
-    public boolean leftClickBlockAction(Player var1, PlayerInteractEvent var2, Block var3, ItemStack var4) {
-        return false;
-    }
-
-    @Override
-    public boolean rightClickAirAction(Player var1, ItemStack var2) {
-        return false;
-    }
-
-    @Override
-    public boolean rightClickBlockAction(Player var1, PlayerInteractEvent var2, Block var3, ItemStack var4) {
-        return false;
-    }
-
-    @Override
-    public boolean shiftLeftClickAirAction(Player var1, ItemStack var2) {
-        return false;
-    }
-
-    @Override
-    public boolean shiftLeftClickBlockAction(Player var1, PlayerInteractEvent var2, Block var3, ItemStack var4) {
-        return false;
-    }
-
-    @Override
-    public boolean shiftRightClickAirAction(Player var1, ItemStack var2) {
-        return false;
-    }
-
-    @Override
-    public boolean shiftRightClickBlockAction(Player var1, PlayerInteractEvent var2, Block var3, ItemStack var4) {
-        return false;
-    }
-
-    @Override
-    public boolean middleClickAction(Player var1, ItemStack var2) {
-        return false;
-    }
-
-    @Override
-    public boolean hitEntityAction(Player var1, EntityDamageByEntityEvent var2, Entity var3, ItemStack var4) {
-        return false;
-    }
-
-    @Override
-    public boolean breakBlockAction(Player var1, BlockBreakEvent var2, Block var3, ItemStack var4) {
-        return false;
-    }
-
-    @Override
-    public boolean clickedInInventoryAction(Player var1, InventoryClickEvent var2, ItemStack var3, ItemStack var4) {
-        return false;
     }
 
     public void setAttackSpeed(int attackSpeed) {

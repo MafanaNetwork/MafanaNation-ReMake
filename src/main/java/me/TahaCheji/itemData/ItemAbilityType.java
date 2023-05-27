@@ -5,6 +5,9 @@ public enum ItemAbilityType {
     LEFT_CLICK("ON HIT"),
     RIGHT_CLICK("RIGHT CLICK"),
     HOLDING("HOLDING"),
+    SHIFT("SHIFT"),
+    WEARING("WEARING"),
+    JUMP("JUMP"),
     NONE("");
 
     private final String text;

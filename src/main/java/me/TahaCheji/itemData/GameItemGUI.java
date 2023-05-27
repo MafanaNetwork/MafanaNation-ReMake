@@ -5,8 +5,10 @@ import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.TahaCheji.Main;
-import me.TahaCheji.gameUtil.ItemUtil;
-import me.TahaCheji.playerData.GamePlayer;
+import me.TahaCheji.gameUtil.NBTUtils;
+import me.TahaCheji.itemData.GameArmorData.GameArmor;
+import me.TahaCheji.itemData.GameStaffData.GameStaff;
+import me.TahaCheji.itemData.GameWeaponData.GameWeapons;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -66,8 +68,8 @@ public class GameItemGUI implements Listener {
         gui.setItem(49, new GuiItem(greystainedglass));
         gui.setItem(6, 3, ItemBuilder.from(Material.PAPER).setName(ChatColor.DARK_GRAY + "Previous").asGuiItem(event -> gui.previous()));
         gui.setItem(6, 7, ItemBuilder.from(Material.PAPER).setName(ChatColor.DARK_GRAY + "Next").asGuiItem(event -> gui.next()));
-        for(GameWeapons masterItems : Main.getInstance().getGameWeapons()) {
-            ItemStack itemStack = masterItems.getGameWeapon();
+        for(GameWeapons gameWeapons : Main.getInstance().getOriginalGameWeapons()) {
+            ItemStack itemStack = gameWeapons.getGameWeapon();
             ItemMeta itemMeta = itemStack.getItemMeta();
             List<String> itemLore = new ArrayList<>();
             if(itemMeta.getLore() != null) {
@@ -80,8 +82,9 @@ public class GameItemGUI implements Listener {
             itemMeta.setLore(itemLore);
             itemStack.setItemMeta(itemMeta);
             gui.addItem(new GuiItem(itemStack));
+
         }
-        for(GameArmor gameArmor : Main.getInstance().getGameArmors()) {
+        for(GameArmor gameArmor : Main.getInstance().getOriginalGameArmor()) {
             ItemStack itemStack = gameArmor.getGameArmor();
             ItemMeta itemMeta = itemStack.getItemMeta();
             List<String> itemLore = new ArrayList<>();
@@ -96,7 +99,7 @@ public class GameItemGUI implements Listener {
             itemStack.setItemMeta(itemMeta);
             gui.addItem(new GuiItem(itemStack));
         }
-        for(GameSpell gameSpell : Main.getInstance().getGameSpells()) {
+        for(GameSpell gameSpell : Main.getInstance().getOriginalGameSpells()) {
             ItemStack itemStack = gameSpell.getGameSpell();
             ItemMeta itemMeta = itemStack.getItemMeta();
             List<String> itemLore = new ArrayList<>();
@@ -111,7 +114,7 @@ public class GameItemGUI implements Listener {
             itemStack.setItemMeta(itemMeta);
             gui.addItem(new GuiItem(itemStack));
         }
-        for(GameStaff gameStaff : Main.getInstance().getGameStaffs()) {
+        for(GameStaff gameStaff : Main.getInstance().getOriginalGameStaffs()) {
             ItemStack itemStack = gameStaff.getGameStaff();
             ItemMeta itemMeta = itemStack.getItemMeta();
             List<String> itemLore = new ArrayList<>();
@@ -126,7 +129,7 @@ public class GameItemGUI implements Listener {
             itemStack.setItemMeta(itemMeta);
             gui.addItem(new GuiItem(itemStack));
         }
-        for(GameBow gameBow : Main.getInstance().getGameBow()) {
+        for(GameBow gameBow : Main.getInstance().getOriginalGameBow()) {
             ItemStack itemStack = gameBow.getGameBow();
             ItemMeta itemMeta = itemStack.getItemMeta();
             List<String> itemLore = new ArrayList<>();
@@ -145,7 +148,7 @@ public class GameItemGUI implements Listener {
     }
 
     @EventHandler
-    public void onItemClick(InventoryClickEvent event) {
+    public void onItemClick(InventoryClickEvent event) throws InstantiationException, IllegalAccessException {
         if(!event.getView().getTitle().contains("All Game Items")) {
             return;
         }
@@ -161,21 +164,26 @@ public class GameItemGUI implements Listener {
         }
         Player player = (Player) event.getWhoClicked();
         for(GameItem gameItem : Main.getInstance().getGameItems()) {
-            if(gameItem.getUUID() == ItemUtil.getIntFromItem(event.getCurrentItem(), "GameItemUUID")) {
+            if(Objects.equals(gameItem.getItemUUID(), NBTUtils.getString(event.getCurrentItem(), "GameItemUUID"))) {
                 if(gameItem instanceof GameWeapons) {
                     player.getInventory().addItem(((GameWeapons) gameItem).getGameWeapon());
+                    ((GameWeapons) gameItem).createNewInstance();
                 }
                 if(gameItem instanceof GameBow) {
                     player.getInventory().addItem(((GameBow ) gameItem).getGameBow());
+                    ((GameBow) gameItem).createNewInstance();
                 }
                 if(gameItem instanceof GameStaff) {
                     player.getInventory().addItem(((GameStaff) gameItem).getGameStaff());
+                    ((GameStaff) gameItem).createNewInstance();
                 }
                 if(gameItem instanceof GameSpell) {
                     player.getInventory().addItem(((GameSpell) gameItem).getGameSpell());
+                    ((GameSpell) gameItem).createNewInstance();
                 }
                 if(gameItem instanceof GameArmor) {
                     player.getInventory().addItem(((GameArmor) gameItem).getGameArmor());
+                    ((GameArmor) gameItem).createNewInstance();
                 }
             }
         }

@@ -44,7 +44,9 @@
                             <relocations>
                                 <relocation>
                                     <pattern>dev.triumphteam.gui</pattern>
-                                    <shadedPattern>me.TahaCheji.gui</shadedPattern> <!-- Replace package here here -->
+                                    <shadedPattern>me.TahaCheji.gui</shadedPattern>
+                                    <pattern>fr.mrmicky.fastboard</pattern>
+                                    <shadedPattern>me.TahaCheji.fastboard</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -103,7 +105,6 @@
             <artifactId>reflections</artifactId>
             <version>0.9.12</version>
         </dependency>
-
         <dependency>
             <groupId>com.github.MaskedWasTaken</groupId>
             <artifactId>MafanaMysqlAPI-Remake</artifactId>
@@ -119,6 +120,16 @@
             <groupId>dev.triumphteam</groupId>
             <artifactId>triumph-gui</artifactId>
             <version>3.1.2</version> <!-- replace version here -->
+        </dependency>
+        <dependency>
+            <groupId>fr.mrmicky</groupId>
+            <artifactId>fastboard</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>xyz.xenondevs</groupId>
+            <artifactId>particle</artifactId>
+            <version>1.8.3</version>
         </dependency>
     </dependencies>
 </project>
