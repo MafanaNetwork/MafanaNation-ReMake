@@ -1,8 +1,5 @@
 package me.TahaCheji.itemData;
 
-import me.TahaCheji.itemData.GameStaffData.GameStaffLevel;
-import me.TahaCheji.itemData.GameWeaponData.GameWeaponLevel;
-
 public enum GameItemLevelXPTo {
     ONE(100),
     TWO(GameItemLevelXPTo.ONE.getXp() * 2),
@@ -25,7 +22,7 @@ public enum GameItemLevelXPTo {
         return xp;
     }
 
-    public static GameItemLevelXPTo getXpTo (GameWeaponLevel gameWeaponLevel) {
+    public static GameItemLevelXPTo getXpTo (GameItemLevel gameWeaponLevel) {
         if(gameWeaponLevel.getLevel() == 0) {
             return GameItemLevelXPTo.ONE;
         }
@@ -59,38 +56,5 @@ public enum GameItemLevelXPTo {
         return null;
     }
 
-    public static GameItemLevelXPTo getXpTo (GameStaffLevel gameStaffLevel) {
-        if(gameStaffLevel.getLevel() == 0) {
-            return GameItemLevelXPTo.ONE;
-        }
-        if(gameStaffLevel.getLevel() == 1) {
-            return GameItemLevelXPTo.TWO;
-        }
-        if(gameStaffLevel.getLevel() == 2) {
-            return GameItemLevelXPTo.THREE;
-        }
-        if(gameStaffLevel.getLevel() == 3) {
-            return GameItemLevelXPTo.FOUR;
-        }
-        if(gameStaffLevel.getLevel() == 4) {
-            return GameItemLevelXPTo.FIVE;
-        }
-        if(gameStaffLevel.getLevel() == 5) {
-            return GameItemLevelXPTo.SIX;
-        }
-        if(gameStaffLevel.getLevel() == 6) {
-            return GameItemLevelXPTo.SEVEN;
-        }
-        if(gameStaffLevel.getLevel() == 7) {
-            return GameItemLevelXPTo.EIGHT;
-        }
-        if(gameStaffLevel.getLevel() == 8) {
-            return GameItemLevelXPTo.NINE;
-        }
-        if(gameStaffLevel.getLevel() == 9) {
-            return GameItemLevelXPTo.TEN;
-        }
-        return null;
-    }
 
 }

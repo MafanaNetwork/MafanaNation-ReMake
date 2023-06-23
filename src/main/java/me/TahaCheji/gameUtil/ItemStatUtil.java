@@ -1,7 +1,5 @@
 package me.TahaCheji.gameUtil;
 
-import me.TahaCheji.gameUtil.NBTUtils;
-import me.TahaCheji.itemData.GameArmorData.GameArmor;
 import me.TahaCheji.itemData.GameItem;
 import me.TahaCheji.itemData.GameStaffData.GameStaff;
 import me.TahaCheji.itemData.GameWeaponData.GameWeapons;
@@ -21,10 +19,10 @@ public class ItemStatUtil {
             List<String> lore = new ArrayList<>(itemMeta.getLore());
 
             if (hasStrength(lore)) {
-                return item; // Strength already exists, no need to modify
+                return item;
             }
 
-            int m = -1; // Initialize the index with an invalid value
+            int m = -1;
 
             for (int j = 0; j < lore.size(); j++) {
                 String s = lore.get(j);
@@ -36,9 +34,9 @@ public class ItemStatUtil {
 
             if (m >= 0 && m < lore.size()) {
                 String key = "ItemWeaponStrength";
-                int newValue = ((NBTUtils.getInt(item, key) * 5) / 100) * x;
+                int newValue = ((gameWeapons.getStrength() * 5) / 100) * x;
                 gameWeapons.setStrength(gameWeapons.getStrength() + newValue);
-                String value = ChatColor.DARK_RED + "⚔Strength: " + ChatColor.DARK_GRAY + "+" + ((NBTUtils.getInt(item, key) - (newValue * gameWeapons.getItemLevel().getLevel())) + 5) + " [+" + (newValue * gameWeapons.getItemLevel().getLevel()) + " " + name + "]";
+                String value = ChatColor.DARK_RED + "⚔Strength: " + ChatColor.DARK_GRAY + "+" + gameWeapons.getOriginalStrength() + " [+" + newValue + " " + name + "]";
                 lore.set(m, value);
                 itemMeta.setLore(lore);
                 item.setItemMeta(itemMeta);
@@ -74,9 +72,9 @@ public class ItemStatUtil {
 
             if (m >= 0 && m < lore.size()) {
                 String key = "ItemWeaponHealth";
-                int newValue = ((NBTUtils.getInt(item, key) * 5) / 100) * x;
+                int newValue = ((gameWeapons.getHealth() * 5) / 100) * x;
                 gameWeapons.setHealth(gameWeapons.getHealth() + newValue);
-                String value = ChatColor.RED + "❤Health: " + ChatColor.DARK_GRAY + "+" + ((NBTUtils.getInt(item, key) - (newValue * gameWeapons.getItemLevel().getLevel())) + 5) + " [+" + (newValue * gameWeapons.getItemLevel().getLevel()) + " " + name + "]";
+                String value = ChatColor.RED + "❤Health: " + ChatColor.DARK_GRAY + "+" + gameWeapons.getOriginalHealth() + " [+" + newValue + " " + name + "]";
                 lore.set(m, value);
                 itemMeta.setLore(lore);
                 item.setItemMeta(itemMeta);
@@ -112,9 +110,9 @@ public class ItemStatUtil {
 
             if (m >= 0 && m < lore.size()) {
                 String key = "ItemWeaponArmor";
-                int newValue = ((NBTUtils.getInt(item, key) * 5) / 100) * x;
+                int newValue = ((gameWeapons.getArmor() * 5) / 100) * x;
                 gameWeapons.setArmor(gameWeapons.getArmor() + newValue);
-                String Value = ChatColor.YELLOW + "⛨Armor: " + ChatColor.DARK_GRAY + "+" + ((NBTUtils.getInt(item, key) - (newValue * gameWeapons.getItemLevel().getLevel())) + 5) + " [+" + (newValue * gameWeapons.getItemLevel().getLevel()) + " " + name + "]";
+                String Value = ChatColor.YELLOW + "⛨Armor: " + ChatColor.DARK_GRAY + "+" + gameWeapons.getOriginalArmor() + " [+" + newValue + " " + name + "]";
                 lore.set(m, Value);
                 itemMeta.setLore(lore);
                 item.setItemMeta(itemMeta);
@@ -143,9 +141,9 @@ public class ItemStatUtil {
 
             if (m >= 0 && m < lore.size()) {
                 String key = "ItemWeaponArmor";
-                int newValue = ((NBTUtils.getInt(item, key) * 5) / 100) * x;
+                int newValue = ((gameStaff.getArmor() * 5) / 100) * x;
                 gameStaff.setArmor(gameStaff.getArmor() + newValue);
-                String Value = ChatColor.YELLOW + "⛨Armor: " + ChatColor.DARK_GRAY + "+" + ((NBTUtils.getInt(item, key) - (newValue * gameStaff.getItemLevel().getLevel())) + 5) + " [+" + (newValue * gameStaff.getItemLevel().getLevel()) + " " + name + "]";
+                String Value = ChatColor.YELLOW + "⛨Armor: " + ChatColor.DARK_GRAY + "+" + gameStaff.getOriginalArmor() + " [+" + newValue + " " + name + "]";
                 lore.set(m, Value);
                 itemMeta.setLore(lore);
                 item.setItemMeta(itemMeta);
@@ -182,9 +180,9 @@ public class ItemStatUtil {
 
             if (m >= 0 && m < lore.size()) {
                 String key = "ItemWeaponMagic";
-                int newValue = ((NBTUtils.getInt(item, key) * 5) / 100) * x;
+                int newValue = ((gameWeapons.getMagic() * 5) / 100) * x;
                 gameWeapons.setMagic(gameWeapons.getMagic() + newValue);
-                String Value = ChatColor.BLUE + "[M]Magic: " + ChatColor.DARK_GRAY + "+" + ((NBTUtils.getInt(item, key) - (newValue * gameWeapons.getItemLevel().getLevel())) + 5) + " [+" + (newValue * gameWeapons.getItemLevel().getLevel()) + " " + name + "]";
+                String Value = ChatColor.BLUE + "[M]Magic: " + ChatColor.DARK_GRAY + "+" + gameWeapons.getOriginalMagic() + " [+" + newValue + " " + name + "]";
                 lore.set(m, Value);
                 itemMeta.setLore(lore);
                 item.setItemMeta(itemMeta);
@@ -212,9 +210,9 @@ public class ItemStatUtil {
 
             if (m >= 0 && m < lore.size()) {
                 String key = "ItemWeaponMagic";
-                int newValue = ((NBTUtils.getInt(item, key) * 5) / 100) * x;
+                int newValue = ((gameStaff.getMagic() * 5) / 100) * x;
                 gameStaff.setMagic(gameStaff.getMagic() + newValue);
-                String Value = ChatColor.BLUE + "[M]Magic: " + ChatColor.DARK_GRAY + "+" + ((NBTUtils.getInt(item, key) - (newValue * gameStaff.getItemLevel().getLevel())) + 5) + " [+" + (newValue * gameStaff.getItemLevel().getLevel()) + " " + name + "]";
+                String Value = ChatColor.BLUE + "[M]Magic: " + ChatColor.DARK_GRAY + "+" + gameStaff.getOriginalMagic() + " [+" + newValue + " " + name + "]";
                 lore.set(m, Value);
                 itemMeta.setLore(lore);
                 item.setItemMeta(itemMeta);
@@ -250,9 +248,9 @@ public class ItemStatUtil {
 
             if (m >= 0 && m < lore.size()) {
                 String key = "ItemWeaponMobility";
-                int newValue = ((NBTUtils.getInt(item, key) * 5) / 100) * x;
+                int newValue = ((gameWeapons.getMobility() * 5) / 100) * x;
                 gameWeapons.setMobility(gameWeapons.getMobility() + newValue);
-                String Value = ChatColor.DARK_GREEN + "〰Mobility: " + ChatColor.DARK_GRAY + "+" + ((NBTUtils.getInt(item, key) - (newValue * gameWeapons.getItemLevel().getLevel())) + 5) + " [+" + (newValue * gameWeapons.getItemLevel().getLevel()) + " " + name + "]";
+                String Value = ChatColor.DARK_GREEN + "〰Mobility: " + ChatColor.DARK_GRAY + "+" + gameWeapons.getOriginalMobility() + " [+" + newValue + " " + name + "]";
                 lore.set(m, Value);
                 itemMeta.setLore(lore);
                 item.setItemMeta(itemMeta);
@@ -280,9 +278,9 @@ public class ItemStatUtil {
 
             if (m >= 0 && m < lore.size()) {
                 String key = "ItemWeaponMobility";
-                int newValue = ((NBTUtils.getInt(item, key) * 5) / 100) * x;
+                int newValue = ((gameStaff.getMobility() * 5) / 100) * x;
                 gameStaff.setMobility(gameStaff.getMobility() + newValue);
-                String Value = ChatColor.DARK_GREEN + "〰Mobility: " + ChatColor.DARK_GRAY + "+" + ((NBTUtils.getInt(item, key) - (newValue * gameStaff.getItemLevel().getLevel())) + 5) + " [+" + (newValue * gameStaff.getItemLevel().getLevel()) + " " + name + "]";
+                String Value = ChatColor.DARK_GREEN + "〰Mobility: " + ChatColor.DARK_GRAY + "+" + gameStaff.getOriginalMobility() + " [+" + newValue + " " + name + "]";
                 lore.set(m, Value);
                 itemMeta.setLore(lore);
                 item.setItemMeta(itemMeta);

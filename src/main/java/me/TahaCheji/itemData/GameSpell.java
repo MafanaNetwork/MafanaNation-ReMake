@@ -56,8 +56,8 @@ public class GameSpell extends GameItem{
 
     public GameSpell createNewInstance() throws InstantiationException, IllegalAccessException {
         GameSpell game = this.getClass().newInstance();
+        game.setSpellUUID(UUID.randomUUID().toString());
         Main.getInstance().getGameSpells().add(game);
-        game.setSpellUUID(getSpellUUID());
         return game;
     }
 

@@ -23,7 +23,15 @@ public class GamePlayerDamageMobEvent implements Listener {
         Entity damagedEntity = event.getEntity();
         if (damagedEntity instanceof Player) {
             Player player = (Player) damagedEntity;
-            new DamageManager(Main.getInstance().getGamePlayer(player)).playerTakeDamage((int) event.getDamage());
+            GameMob gameMob = MobUtil.getMob(NBTUtils.getEntityString(event.getDamager(), "MobName"));
+            if(gameMob != null) {
+                new DamageManager(Main.getInstance().getGamePlayer(player), gameMob).playerTakeDamage((int) event.getDamage());
+            } else {
+                GameMobBoss boss = MobUtil.getBoss(NBTUtils.getEntityString(event.getDamager(), "MobBossName"));
+                if(boss != null) {
+                    new DamageManager(Main.getInstance().getGamePlayer(player), boss).playerTakeDamage((int) event.getDamage());
+                }
+            }
         }
     }
 

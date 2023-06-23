@@ -12,6 +12,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,13 +34,13 @@ public class GameMob implements GameMobEvents {
     private final ItemStack mainItem;
     private final ItemStack[] armor;
     private List<LootItem> lootTable;
-    private UUID uuid;
+    private String uuid;
     private GameMobSpawn gameMobSpawn;
 
     LivingEntity entity;
 
     public GameMob(String name, double spawnChance, EntityType type, double maxHealth, int strength, int defense, int damage, int speed,
-                     ItemStack mainItem, ItemStack[] armor, LootItem... lootItems) {
+                   ItemStack mainItem, ItemStack[] armor, LootItem... lootItems) {
         this.name = name;
         this.spawnChance = spawnChance;
         this.maxHealth = maxHealth;
@@ -50,7 +51,7 @@ public class GameMob implements GameMobEvents {
         this.speed = speed;
         this.mainItem = mainItem;
         this.armor = armor;
-        this.uuid = UUID.randomUUID();
+        this.uuid = name + "_mob";
         lootTable = Arrays.asList(lootItems);
     }
 
@@ -65,20 +66,20 @@ public class GameMob implements GameMobEvents {
         this.speed = speed;
         this.mainItem = mainItem;
         this.armor = armor;
-        this.uuid = UUID.randomUUID();
+        this.uuid = name + "_mob";
     }
 
     public LivingEntity spawnMob(Location location, Player player) {
         LivingEntity entity = (LivingEntity) location.getWorld().spawnEntity(location, type);
         entity.setCustomNameVisible(true);
-        entity.setCustomName(getName() + " " + ChatColor.DARK_GRAY + "[" + ChatColor.RED + "♥" + maxHealth +  ChatColor.DARK_GRAY + "/" + ChatColor.RED + maxHealth  + "♥" + ChatColor.DARK_GRAY + "]");
+        entity.setCustomName(getName() + " " + ChatColor.DARK_GRAY + "[" + ChatColor.RED + "♥" + maxHealth + ChatColor.DARK_GRAY + "/" + ChatColor.RED + maxHealth + "♥" + ChatColor.DARK_GRAY + "]");
         entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth);
         setHealth(maxHealth);
         entity.setHealth(maxHealth);
-        if(defense != 0) {
+        if (defense != 0) {
             entity.getAttribute(Attribute.GENERIC_ARMOR).setBaseValue(defense);
         }
-        if(speed != 0) {
+        if (speed != 0) {
             entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
         }
         entity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(strength * damage / 5);
@@ -90,18 +91,29 @@ public class GameMob implements GameMobEvents {
         inv.setBootsDropChance(0f);
         inv.setItemInMainHand(mainItem);
         inv.setItemInMainHandDropChance(0f);
-        NBTUtils.setEntityString(entity, "MobName", uuid.toString());
-        this.entity = entity;
+        NBTUtils.setEntityString(entity, "MobName", uuid);
         Main.getInstance().getActiveMobs().add(this);
         onSpawn(player, entity);
+        setEntity(entity);
+        BukkitRunnable abilityTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!entity.isDead()) {
+                    passiveAbility(entity);
+                }
+            }
+        };
+
+        abilityTask.runTaskTimer(Main.getInstance(), 0L, 20L);
         return entity;
     }
 
     public void onMobDeath(Player player) {
         onDeath(player, entity);
         tryDropLoot(entity.getLocation(), player);
-        entity.remove();
-        if(this instanceof GameMobBoss) {
+        System.out.println(1);
+        entity.setHealth(0);
+        if (this instanceof GameMobBoss) {
             Main.getInstance().getActiveBoss().remove(this);
         }
         Main.getInstance().getActiveMobs().remove(this);
@@ -109,63 +121,130 @@ public class GameMob implements GameMobEvents {
 
     public void killMob() {
         Main.getInstance().getActiveMobs().remove(this);
-        if(!getMob().isDead()) {
+        if (!getMob().isDead()) {
             getMob().remove();
         }
     }
 
-    public GameMob getMob (String name) {
-        if(Objects.equals(name, uuid.toString())) {
+    public GameMob getMob(String name) {
+        if (Objects.equals(name, uuid)) {
             return this;
         }
         return null;
     }
 
     public void tryDropLoot(Location location, Player player) {
+        if (lootTable == null) {
+            return;
+        }
         for (LootItem item : lootTable) {
             item.tryDropItem(location, player);
         }
     }
 
 
-    public int getXp() {return xp;}
-    public String getUuid() {
-        return uuid.toString();
+    public int getXp() {
+        return xp;
     }
+
+    public String getUuid() {
+        return uuid;
+    }
+
     public LivingEntity getEntity() {
         return entity;
     }
+
     public void setLootTable(List<LootItem> lootTable) {
         this.lootTable = lootTable;
     }
-    public void setUuid(UUID uuid) {
+
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
+
+
     public void setEntity(LivingEntity entity) {
         this.entity = entity;
     }
+
     public void setHealth(double health) {
         this.health = health;
     }
+
     public double getHealth() {
         return health;
     }
-    public void setXp(int xp) {this.xp = xp;}
-    public void setGameMobSpawn(GameMobSpawn gameMobSpawn) {this.gameMobSpawn = gameMobSpawn;}
-    public GameMobSpawn getGameMobSpawn() {return gameMobSpawn;}
-    public void setLootTable(LootItem... lootTable) {this.lootTable = Arrays.asList(lootTable);}
-    public void registerMob() {Main.getInstance().getGameMobs().add(this);}
-    public Location getLocation() {return getMob().getLocation();}
-    public Entity getMob() {return entity;}
-    public String getName() {return name;}
-    public double getSpawnChance() {return spawnChance;}
-    public double getMaxHealth() {return maxHealth;}
-    public EntityType getType() {return type;}
-    public int getStrength() {return strength;}
-    public int getDefense() {return defense;}
-    public int getDamage() {return damage;}
-    public int getSpeed() {return speed;}
-    public ItemStack getMainItem() {return mainItem;}
-    public ItemStack[] getArmor() {return armor;}
-    public List<LootItem> getLootTable() {return lootTable;}
+
+    public void setXp(int xp) {
+        this.xp = xp;
+    }
+
+    public void setGameMobSpawn(GameMobSpawn gameMobSpawn) {
+        this.gameMobSpawn = gameMobSpawn;
+    }
+
+    public GameMobSpawn getGameMobSpawn() {
+        return gameMobSpawn;
+    }
+
+    public void setLootTable(LootItem... lootTable) {
+        this.lootTable = Arrays.asList(lootTable);
+    }
+
+    public void registerMob() {
+        Main.getInstance().getGameMobs().add(this);
+    }
+
+    public Location getLocation() {
+        return getMob().getLocation();
+    }
+
+    public Entity getMob() {
+        return entity;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getSpawnChance() {
+        return spawnChance;
+    }
+
+    public double getMaxHealth() {
+        return maxHealth;
+    }
+
+    public EntityType getType() {
+        return type;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public ItemStack getMainItem() {
+        return mainItem;
+    }
+
+    public ItemStack[] getArmor() {
+        return armor;
+    }
+
+    public List<LootItem> getLootTable() {
+        return lootTable;
+    }
 }

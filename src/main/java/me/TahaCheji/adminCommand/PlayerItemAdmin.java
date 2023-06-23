@@ -1,12 +1,12 @@
 package me.TahaCheji.adminCommand;
 
-import me.TahaCheji.gameItems.Weapons.recipeItem;
 import me.TahaCheji.gameUtil.ItemUtil;
 import me.TahaCheji.itemData.GameArmorData.GameArmor;
 import me.TahaCheji.itemData.GameItemGUI;
+import me.TahaCheji.itemData.GameRecipeData.GameRecipe;
 import me.TahaCheji.itemData.GameStaffData.GameStaff;
 import me.TahaCheji.itemData.GameWeaponData.GameWeapons;
-import me.TahaCheji.recipeData.GameRecipeCrafting;
+import me.TahaCheji.itemData.GameRecipeData.GameRecipeCrafting;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -29,18 +29,25 @@ public class PlayerItemAdmin implements CommandExecutor {
                 player.sendMessage(ChatColor.RED + "[MafanaNation Manager]: You Do Not Have The Permission To Do This Command");
                 return true;
             }
+            if(args[0].equalsIgnoreCase("test")) {
+                GameRecipe.itemArmorStand(player.getItemInHand(), player);
+            }
             if(args[0].equalsIgnoreCase("cr")) {
                 player.openInventory(GameRecipeCrafting.getCraftingGui());
             }
             if (args[0].equalsIgnoreCase("level")) {
                 ItemStack itemStack = ((Player) sender).getItemInHand();
-                GameWeapons originalGameWeapons = ItemUtil.getGameWeapon(itemStack);
-                player.setItemInHand(originalGameWeapons.getItemLevel().addLevel(1, originalGameWeapons));
+                GameWeapons gameWeapon = ItemUtil.getGameWeapon(itemStack);
+                assert gameWeapon != null;
+                gameWeapon.getGameItemLevel().addLevel(Integer.parseInt(args[1]));
+                player.setItemInHand(gameWeapon.getGameWeapon());
             }
-            if (args[0].equalsIgnoreCase("levelm")) {
+            if (args[0].equalsIgnoreCase("levelmage")) {
                 ItemStack itemStack = ((Player) sender).getItemInHand();
-                GameStaff originalGameWeapons = ItemUtil.getGameStaff(itemStack);
-                player.setItemInHand(originalGameWeapons.getItemLevel().addLevel(1, originalGameWeapons));
+                GameStaff gameStaff = ItemUtil.getGameStaff(itemStack);
+                assert gameStaff != null;
+                gameStaff.getGameItemLevel().addLevel(Integer.parseInt(args[1]));
+                player.setItemInHand(gameStaff.getGameStaff());
             }
             if(args[0].equalsIgnoreCase("check")) {
                 ItemStack itemStack = ((Player) sender).getItemInHand();
@@ -49,11 +56,19 @@ public class PlayerItemAdmin implements CommandExecutor {
             }
             if (args[0].equalsIgnoreCase("xp")) {
                 ItemStack itemStack = ((Player) sender).getItemInHand();
-                GameWeapons originalGameWeapons = ItemUtil.getGameWeapon(itemStack);
-                player.setItemInHand(originalGameWeapons.getItemLevel().addXP(Integer.parseInt(args[1]), originalGameWeapons));
+                GameWeapons gameWeapon = ItemUtil.getGameWeapon(itemStack);
+                assert gameWeapon != null;
+                gameWeapon.getGameItemLevel().addXP(Integer.parseInt(args[1]));
+                player.setItemInHand(gameWeapon.getGameWeapon());
+            }
+            if (args[0].equalsIgnoreCase("xpmage")) {
+                ItemStack itemStack = ((Player) sender).getItemInHand();
+                GameStaff gameStaff = ItemUtil.getGameStaff(itemStack);
+                assert gameStaff != null;
+                gameStaff.getGameItemLevel().addXP(Integer.parseInt(args[1]));
+                player.setItemInHand(gameStaff.getGameStaff());
             }
             if(args[0].equalsIgnoreCase("items")) {
-                player.getInventory().addItem(new recipeItem().getItem(), new recipeItem().getItem(), new recipeItem().getItem(), new recipeItem().getItem(), new recipeItem().getItem(), new recipeItem().getItem(), new recipeItem().getItem(), new recipeItem().getItem(), new recipeItem().getItem());
                 new GameItemGUI().getAllItemsGui().open((HumanEntity) sender);
                 return true;
             }

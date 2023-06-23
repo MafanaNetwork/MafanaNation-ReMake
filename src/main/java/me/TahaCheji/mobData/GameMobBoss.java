@@ -19,7 +19,7 @@ public class GameMobBoss extends GameMob{
     private List<LootItem> lootTable;
     private List<GameMob> minions = new ArrayList<>();
     private LivingEntity entity;
-    private UUID mobBossName;
+    private String mobBossName;
 
     public boolean stageOne = false;
     public boolean stageTwo = false;
@@ -27,12 +27,12 @@ public class GameMobBoss extends GameMob{
 
     public GameMobBoss(String name, double spawnChance, EntityType type, double maxHealth, int strength, int defense, int damage, int speed, ItemStack mainItem, ItemStack[] armor, LootItem... lootItems) {
         super(name, spawnChance, type, maxHealth, strength, defense, damage, speed, mainItem, armor, lootItems);
-        this.mobBossName = UUID.randomUUID();
+        this.mobBossName = name + "_boss";
     }
 
     public GameMobBoss(String name, double spawnChance, double maxHealth, EntityType type, int strength, int defense, int damage, int speed, ItemStack mainItem, ItemStack[] armor) {
         super(name, spawnChance, maxHealth, type, strength, defense, damage, speed, mainItem, armor);
-        this.mobBossName = UUID.randomUUID();
+        this.mobBossName = name + "_boss";
     }
 
 
@@ -58,11 +58,9 @@ public class GameMobBoss extends GameMob{
         inv.setBootsDropChance(0f);
         inv.setItemInMainHand(getMainItem());
         inv.setItemInMainHandDropChance(0f);
-        NBTUtils.setEntityString(entity, "MobBossName", mobBossName.toString());
-        this.entity = entity;
+        NBTUtils.setEntityString(entity, "MobBossName", mobBossName);
         Main.getInstance().getActiveBoss().add(this);
         Main.getInstance().getPlayerBossFight().put(player, this);
-        onSpawn(player, entity);
         setEntity(entity);
         return entity;
     }
@@ -75,19 +73,22 @@ public class GameMobBoss extends GameMob{
     }
 
     public void tryDropLoot(Location location, Player player) {
+        if(lootTable == null) {
+            return;
+        }
         for (LootItem item : lootTable) {
             item.tryDropItem(location, player);
         }
     }
 
     public GameMobBoss getBossMob(String name) {
-        if(Objects.equals(name, mobBossName.toString())) {
+        if(Objects.equals(name, mobBossName)) {
             return this;
         }
         return null;
     }
 
-    public UUID getMobBossUUID() {
+    public String getMobBossUUID() {
         return mobBossName;
     }
     public void addMinion(GameMob mob) {minions.add(mob);}

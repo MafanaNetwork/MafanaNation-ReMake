@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class GameArmor extends GameItem {
 
@@ -80,8 +81,8 @@ public abstract class GameArmor extends GameItem {
 
     public GameArmor createNewInstance() throws InstantiationException, IllegalAccessException {
         GameArmor game = this.getClass().newInstance();
+        game.setArmorUUID(UUID.randomUUID().toString());
         Main.getInstance().getGameArmors().add(game);
-        game.setArmorUUID(getArmorUUID());
         return game;
     }
 

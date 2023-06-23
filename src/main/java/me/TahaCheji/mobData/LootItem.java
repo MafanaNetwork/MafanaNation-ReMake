@@ -64,7 +64,7 @@ public class LootItem {
         if(NBTUtils.getString(item, "ItemType").contains("Helmet")) {
             as.getEquipment().setHelmet(item);
         } else {
-            as.getEquipment().setItemInMainHand(item);
+            as.getEquipment().setHelmet(item);
         }
 
     }

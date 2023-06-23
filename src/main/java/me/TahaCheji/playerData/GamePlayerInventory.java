@@ -101,7 +101,10 @@ public class GamePlayerInventory {
             try {
                 ItemStack[] inventory = inventoryItems.toArray(new ItemStack[0]);
                 ItemStack[] armor = inventoryArmor.toArray(new ItemStack[0]);
-                Inv.getInstance().getInvMysqlInterface().setData(player, Inv.getInstance().getInventoryDataHandler().encodeItems(inventory), Inv.getInstance().getInventoryDataHandler().encodeItems(armor), "True");
+                Inv.getInstance().getInvMysqlInterface().setData(player,
+                        Inv.getInstance().getInventoryDataHandler().encodeItems(inventory),
+                        Inv.getInstance().getInventoryDataHandler().encodeItems(armor),
+                        "True");
                 //Inv.getInstance().getInventoryDataHandler().onDataSaveFunction(player, true, "true", inventory, armor);
             } catch (Exception e) {
                     e.printStackTrace(); // Log the exception

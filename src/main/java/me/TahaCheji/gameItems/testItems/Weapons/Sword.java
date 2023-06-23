@@ -1,17 +1,10 @@
-package me.TahaCheji.gameItems.Weapons;
+package me.TahaCheji.gameItems.testItems.Weapons;
 
 import me.TahaCheji.Main;
 import me.TahaCheji.itemData.*;
-import me.TahaCheji.itemData.GameWeaponData.GameWeaponLevel;
 import me.TahaCheji.itemData.GameWeaponData.GameWeapons;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class Sword extends GameWeapons {
@@ -25,17 +18,15 @@ public class Sword extends GameWeapons {
         setHealth(123);
         setArmor(112);
         setGameAbility(new GameItemAbility("Hump", ItemAbilityType.LEFT_CLICK, 5,5 , 10, "zzzzz"));
-        setItemLevel(new GameWeaponLevel(0, 20));
-        getItemLevel().setItem(getGameWeapon());
     }
 
     @Override
     public boolean leftClickAirAction(Player var1, ItemStack var2) {
-        CoolDown coolDown = new CoolDown(this, Main.getInstance().getGamePlayer(var1));
-        if(coolDown.ifCanUse(this)) {
+        GameItemCoolDown gameItemCoolDown = new GameItemCoolDown(this, Main.getInstance().getGamePlayer(var1));
+        if(gameItemCoolDown.ifCanUse(this)) {
             return false;
         }
-        coolDown.addPlayerToCoolDownWeapon();
+        gameItemCoolDown.addPlayerToCoolDownWeapon();
         var1.sendMessage("1");
         return true;
     }

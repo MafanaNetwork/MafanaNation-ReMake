@@ -3,11 +3,7 @@ package me.TahaCheji.itemData.GameStaffData;
 import me.TahaCheji.Main;
 import me.TahaCheji.gameUtil.ItemUtil;
 import me.TahaCheji.gameUtil.NBTUtils;
-import me.TahaCheji.itemData.GameItem;
-import me.TahaCheji.itemData.GameItemAbility;
-import me.TahaCheji.itemData.GameWeaponData.GameWeaponLevel;
-import me.TahaCheji.itemData.ItemRarity;
-import me.TahaCheji.itemData.ItemType;
+import me.TahaCheji.itemData.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -24,9 +20,14 @@ public class GameStaff extends GameItem {
     public int armor;
     public int magic;
     public int mobility;
+
+    public int originalArmor;
+    public int originalMagic;
+    public int originalMobility;
+
     public List<String> lore;
     public GameItemAbility gameItemAbility;
-    public GameStaffLevel itemLevel = null;
+    public GameItemLevel gameItemLevel;
     private String staffUUID;
 
     public GameStaff(String name, Material material, ItemType itemType, ItemRarity itemRarity) {
@@ -38,10 +39,11 @@ public class GameStaff extends GameItem {
     public ItemStack getGameStaff() {
         ItemStack itemStack = getItem();
         ItemMeta meta = itemStack.getItemMeta();
-        meta.setDisplayName(ChatColor.DARK_GRAY + "[" + getItemLevel().getLevel() + "] " + getItemRarity().getColor() + getName());
         List<String> lore = new ArrayList<>();
         lore.add(getItemRarity().getColor() + getItemRarity().getLore() + ChatColor.DARK_GRAY + "| " + getItemType().getLore() + " | " + getMaterial().name());
-        lore.addAll(getItemLevel().getLore(itemStack));
+        if(getGameItemLevel() != null) {
+            lore.addAll(getGameItemLevel().getLore(itemStack));
+        }
         lore.add(ChatColor.DARK_GRAY + ItemUtil.itemLoreDash(lore.get(0)));
         lore.add("");
         if (armor != 0) {
@@ -64,30 +66,31 @@ public class GameStaff extends GameItem {
         meta.setLore(lore);
         itemStack.setItemMeta(meta);
 
-        this.staffUUID = UUID.randomUUID().toString();
         itemStack = NBTUtils.setInt(itemStack, "ItemWeaponArmor", armor);
         itemStack = NBTUtils.setInt(itemStack, "ItemWeaponMagic", magic);
         itemStack = NBTUtils.setInt(itemStack, "ItemWeaponMobility", mobility);
         itemStack = NBTUtils.setString(itemStack, "GameStaffUUID", getStaffUUID());
-        itemStack = itemLevel.getLevelItemStack(itemStack);
+        if(getGameItemLevel() != null) {
+            itemStack = getGameItemLevel().setItemToLevel(itemStack);
+        }
         return itemStack.clone();
     }
 
     public GameStaff createNewInstance() throws InstantiationException, IllegalAccessException {
         GameStaff game = this.getClass().newInstance();
+        game.setStaffUUID(UUID.randomUUID().toString());
+        game.setGameItemLevel(new GameItemLevel(this, 0, 0));
         Main.getInstance().getGameStaffs().add(game);
-        game.setStaffUUID(getStaffUUID());
         return game;
     }
 
-    public void setItemLevel(GameStaffLevel itemLevel) {
-        this.itemLevel = itemLevel;
+    public void setGameItemLevel(GameItemLevel gameItemLevel) {
+        this.gameItemLevel = gameItemLevel;
     }
 
-    public GameStaffLevel getItemLevel() {
-        return itemLevel;
+    public GameItemLevel getGameItemLevel() {
+        return gameItemLevel;
     }
-
 
     public List<String> getLore() {
         return lore;
@@ -117,18 +120,6 @@ public class GameStaff extends GameItem {
         return staffUUID;
     }
 
-    public void setArmor(int armor) {
-        this.armor = armor;
-    }
-
-    public void setMagic(int magic) {
-        this.magic = magic;
-    }
-
-    public void setMobility(int mobility) {
-        this.mobility = mobility;
-    }
-
     public int getArmor() {
         return armor;
     }
@@ -139,5 +130,38 @@ public class GameStaff extends GameItem {
 
     public int getMobility() {
         return mobility;
+    }
+
+    public int getOriginalArmor() {
+        return originalArmor;
+    }
+
+    public int getOriginalMagic() {
+        return originalMagic;
+    }
+
+    public int getOriginalMobility() {
+        return originalMobility;
+    }
+
+    public void setArmor(int armor) {
+        if(originalArmor == 0) {
+            originalArmor = armor;
+        }
+        this.armor = armor;
+    }
+
+    public void setMagic(int magic) {
+        if(originalMagic == 0) {
+            originalMagic = magic;
+        }
+        this.magic = magic;
+    }
+
+    public void setMobility(int mobility) {
+        if(originalMobility == 0) {
+            originalMobility = mobility;
+        }
+        this.mobility = mobility;
     }
 }

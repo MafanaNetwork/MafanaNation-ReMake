@@ -1,8 +1,7 @@
-package me.TahaCheji.recipeData;
+package me.TahaCheji.itemData.GameRecipeData;
 
-import me.TahaCheji.gameItems.Weapons.recipeItem;
+import me.TahaCheji.gameItems.testItems.Weapons.recipeItem;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class testGameRecipe extends GameRecipe {

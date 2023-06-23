@@ -1,10 +1,18 @@
-package me.TahaCheji.recipeData;
+package me.TahaCheji.itemData.GameRecipeData;
 
+import me.TahaCheji.Main;
 import me.TahaCheji.gameUtil.NBTUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,7 +56,7 @@ public class GameRecipe {
         craftingItems[8] = gui.getItem(21);
 
         if (!isSame(Arrays.asList(craftingItems))) {
-            return; // Items in the GUI do not match the recipe
+            return;
         }
 
         ItemStack resultItem = getResult().clone();
@@ -85,7 +93,6 @@ public class GameRecipe {
             }
         }
 
-// Update the next slots: 19, 20, 21
         ItemStack slot19 = craftingItems[6];
         if (slot19 != null) {
             int requiredAmount = getIngredients().get(6).getAmount();
@@ -151,17 +158,55 @@ public class GameRecipe {
                 gui.setItem(3, null);
             }
         }
-
-        // Check if the result item can fit in the player's inventory
         HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(resultItem);
 
         if (!remainingItems.isEmpty()) {
-            // Inventory is full, drop the item at the player's location
             player.getWorld().dropItem(player.getLocation(), resultItem);
         }
         gui.setItem(14, null);
+        itemArmorStand(resultItem, player);
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10f, 0f);
     }
+
+    public static void itemArmorStand(ItemStack result, Player player) {
+        Location playerLocation = player.getLocation();
+        playerLocation.add(0, 1.2, 0); // Adjust the height if needed
+
+        // Create an armor stand
+        ArmorStand armorStand = (ArmorStand) player.getWorld().spawnEntity(playerLocation, EntityType.ARMOR_STAND);
+        armorStand.setGravity(false);
+        armorStand.setVisible(false);
+        armorStand.setSmall(true);
+        armorStand.setHelmet(result);
+        armorStand.setCustomNameVisible(true);
+        armorStand.setCustomName(result.getItemMeta().getDisplayName() + ChatColor.GRAY + " x" + result.getAmount());
+
+        // Set the initial position and velocity
+        armorStand.setVelocity(new Vector(0, 1, 0));
+
+        // Schedule the spinning and bouncing task
+        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+            // Start spinning task
+            BukkitTask spinningTask = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
+                armorStand.setRotation(armorStand.getLocation().getYaw() + 10, 0);
+            }, 0L, 1L);
+
+            // Start bouncing task
+            BukkitTask bouncingTask = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
+                Vector velocity = armorStand.getVelocity();
+                velocity.setY(Math.abs(velocity.getY())); // Bounce the armor stand
+                armorStand.setVelocity(velocity);
+            }, 0L, 10L);
+
+            // Cancel the spinning and bouncing tasks after 2 seconds
+            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+                spinningTask.cancel();
+                bouncingTask.cancel();
+                armorStand.remove(); // Remove the armor stand after the animation ends
+            }, 80L); // 20 ticks per second, so 40 ticks = 2 seconds
+        }, 0L);
+    }
+
 
 
 
@@ -187,7 +232,6 @@ public class GameRecipe {
                 return false;
             }
         }
-
         return true;
     }
 

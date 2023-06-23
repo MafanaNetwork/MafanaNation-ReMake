@@ -49,8 +49,8 @@ public class GameBow extends GameItem{
 
     public GameBow createNewInstance() throws InstantiationException, IllegalAccessException {
         GameBow game = this.getClass().newInstance();
+        game.setBowUUID(UUID.randomUUID().toString());
         Main.getInstance().getGameBows().add(game);
-        game.setBowUUID(getBowUUID());
         return game;
     }
 

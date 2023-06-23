@@ -23,7 +23,7 @@ public class MainScoreboard extends ScoreboardManager {
                     "",
                     ChatColor.DARK_GRAY + ">> " + "Player loans: " + ChatColor.GOLD + "none",
                     "",
-                    ChatColor.GOLD + "-=-=-=-Mafana.us.to-=-=-=-"
+                    ChatColor.GOLD + "-=-=-=-Mafana.net-=-=-=-"
             );
         } else {
             board.updateLines(
@@ -35,7 +35,7 @@ public class MainScoreboard extends ScoreboardManager {
                     "",
                     ChatColor.DARK_GRAY + ">> " + "Player loans: " + ChatColor.GOLD + "none",
                     "",
-                    ChatColor.GOLD + "-=-=-=-Mafana.us.to-=-=-=-"
+                    ChatColor.GOLD + "-=-=-=-Mafana.net-=-=-=-"
             );
         }
     }

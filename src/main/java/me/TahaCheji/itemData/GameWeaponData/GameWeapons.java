@@ -21,7 +21,14 @@ public abstract class GameWeapons extends GameItem {
     public int armor;
     public int magic;
     public int mobility;
-    public GameWeaponLevel itemLevel = null;
+
+    public int originalStrength;
+    public int originalHealth;
+    public int originalArmor;
+    public int originalMagic;
+    public int originalMobility;
+
+    public GameItemLevel gameItemLevel;
     public GameItemAbility gameItemAbility;
     public List<String> lore;
     private String weaponUUID;
@@ -32,12 +39,13 @@ public abstract class GameWeapons extends GameItem {
     }
 
     public ItemStack getGameWeapon() {
-        ItemStack itemStack = getItem();
+        ItemStack itemStack = getItem().clone();
         ItemMeta meta = itemStack.getItemMeta();
-        meta.setDisplayName(ChatColor.DARK_GRAY + "[" + getItemLevel().getLevel() + "] " + getItemRarity().getColor() + getName());
         List<String> lore = new ArrayList<>();
         lore.add(getItemRarity().getColor() + getItemRarity().getLore() + ChatColor.DARK_GRAY + "| " + getItemType().getLore() + " | " + getMaterial().name());
-        lore.addAll(getItemLevel().getLore(itemStack));
+        if(getGameItemLevel() != null) {
+            lore.addAll(getGameItemLevel().getLore(itemStack));
+        }
         lore.add(ChatColor.DARK_GRAY + ItemUtil.itemLoreDash(lore.get(0)));
         lore.add("");
         if (strength != 0) {
@@ -64,23 +72,24 @@ public abstract class GameWeapons extends GameItem {
         meta.setLore(lore);
         itemStack.setItemMeta(meta);
 
-
-        this.weaponUUID = UUID.randomUUID().toString();
         itemStack = NBTUtils.setInt(itemStack, "ItemWeaponStrength", strength);
         itemStack = NBTUtils.setInt(itemStack, "ItemWeaponHealth", health);
         itemStack = NBTUtils.setInt(itemStack, "ItemWeaponArmor", armor);
         itemStack = NBTUtils.setInt(itemStack, "ItemWeaponMagic", magic);
         itemStack = NBTUtils.setInt(itemStack, "ItemWeaponMobility", mobility);
         itemStack = NBTUtils.setString(itemStack, "GameWeaponUUID", getWeaponUUID());
-        itemStack = itemLevel.getLevelItemStack(itemStack);
+        if(getGameItemLevel() != null) {
+            itemStack = getGameItemLevel().setItemToLevel(itemStack);
+        }
         return itemStack.clone();
     }
 
 
     public GameWeapons createNewInstance() throws InstantiationException, IllegalAccessException {
         GameWeapons gameWeapons = this.getClass().newInstance();
+        gameWeapons.setWeaponUUID(UUID.randomUUID().toString());
+        gameWeapons.setGameItemLevel(new GameItemLevel(this, 0, 0));
         Main.getInstance().getGameWeapons().add(gameWeapons);
-        gameWeapons.setWeaponUUID(getWeaponUUID());
         return gameWeapons;
     }
 
@@ -109,16 +118,13 @@ public abstract class GameWeapons extends GameItem {
         this.gameItemAbility = gameItemAbility;
     }
 
-    public GameWeaponLevel getItemLevel() {
-        return itemLevel;
-    }
 
     public GameItemAbility getGameAbility() {
         return gameItemAbility;
     }
 
-    public void setItemLevel(GameWeaponLevel itemLevel) {
-        this.itemLevel = itemLevel;
+    public void setGameItemLevel(GameItemLevel gameItemLevel) {
+        this.gameItemLevel = gameItemLevel;
     }
 
     public void setLore(String... lore) {
@@ -126,23 +132,43 @@ public abstract class GameWeapons extends GameItem {
     }
 
     public void setStrength(int strength) {
+        if(originalStrength == 0) {
+            originalStrength = strength;
+        }
         this.strength = strength;
     }
 
     public void setHealth(int health) {
+        if(originalHealth == 0) {
+            originalHealth = health;
+        }
         this.health = health;
     }
 
     public void setArmor(int armor) {
+        if(originalArmor == 0) {
+            originalArmor = armor;
+        }
         this.armor = armor;
     }
 
     public void setMagic(int magic) {
+        if(originalMagic == 0) {
+            originalMagic = magic;
+        }
         this.magic = magic;
     }
 
     public void setMobility(int mobility) {
+        if(originalMobility == 0) {
+            originalMobility = mobility;
+        }
         this.mobility = mobility;
+    }
+
+
+    public GameItemLevel getGameItemLevel() {
+        return gameItemLevel;
     }
 
     public int getStrength() {
@@ -163,5 +189,25 @@ public abstract class GameWeapons extends GameItem {
 
     public int getMobility() {
         return mobility;
+    }
+
+    public int getOriginalStrength() {
+        return originalStrength;
+    }
+
+    public int getOriginalHealth() {
+        return originalHealth;
+    }
+
+    public int getOriginalArmor() {
+        return originalArmor;
+    }
+
+    public int getOriginalMagic() {
+        return originalMagic;
+    }
+
+    public int getOriginalMobility() {
+        return originalMobility;
     }
 }

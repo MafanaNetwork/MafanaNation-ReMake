@@ -1,15 +1,15 @@
-package me.TahaCheji.gameItems;
+package me.TahaCheji.gameItems.testItems;
 
 import me.TahaCheji.itemData.GameArmorData.GameArmor;
 import me.TahaCheji.itemData.ItemRarity;
 import me.TahaCheji.itemData.ItemType;
 import org.bukkit.Material;
 
-public class test2 extends GameArmor {
+public class test1 extends GameArmor {
 
 
-    public test2() {
-        super("Armor2", Material.DIAMOND_LEGGINGS, ItemType.LEGGGINGS, ItemRarity.ADMIN);
+    public test1() {
+        super("Armor1", Material.DIAMOND_HELMET, ItemType.HELMET, ItemRarity.ADMIN);
         setLore("test", "test");
         setStrength(4);
         setMagic(2);
@@ -17,7 +17,7 @@ public class test2 extends GameArmor {
         setHealth(1);
         setArmor(1);
         setArmorSet(testSet.getInstance());
-        testSet.getInstance().setLeggings(getGameArmor());
+        testSet.getInstance().setHelmet(getGameArmor());
     }
 
 }

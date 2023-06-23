@@ -168,15 +168,6 @@ public class GamePlayerStats {
         }
     }
 
-
-
-
-
-
-
-
-
-
     public int getBaseArmor() {
         return baseArmor;
     }

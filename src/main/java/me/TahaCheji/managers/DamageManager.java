@@ -105,6 +105,8 @@ public class DamageManager {
     }
 
     public void playerTakeDamage(int damageTook) {
+        gameMob.getHit(gamePlayer.getPlayer(), gameMob.getMob());
+        gameMob.onAbilityHit(gamePlayer.getPlayer(), gameMob.getEntity());
         double remainingHealth = gamePlayer.getGamePlayerStats().playerGetDamage(damageTook);
         if (remainingHealth <= 0) {
             gamePlayer.getGamePlayerStats().setHealth(gamePlayer.getGamePlayerStats().getBaseHealth());
@@ -135,9 +137,6 @@ public class DamageManager {
             }, 0); // Adjust the delay (in ticks) as needed
         }
     }
-
-
-
 
 
     public GamePlayer getGamePlayer() {

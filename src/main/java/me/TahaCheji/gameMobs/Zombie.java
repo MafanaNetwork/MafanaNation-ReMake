@@ -1,18 +1,12 @@
 package me.TahaCheji.gameMobs;
 
-import me.TahaCheji.gameItems.Weapons.recipeItem;
+import me.TahaCheji.gameItems.testItems.Weapons.recipeItem;
 import me.TahaCheji.mobData.GameMob;
-import me.TahaCheji.mobData.GameMobSpawn;
 import me.TahaCheji.mobData.LootItem;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class Zombie extends GameMob {
 
@@ -30,7 +24,10 @@ public class Zombie extends GameMob {
 
     @Override
     public boolean passiveAbility(Entity entity) {
-        return false;
+        for(Player player : entity.getLocation().getNearbyPlayers(5)) {
+            player.sendMessage("near zombie");
+        }
+        return true;
     }
 
     @Override

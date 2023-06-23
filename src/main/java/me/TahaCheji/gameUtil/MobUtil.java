@@ -6,6 +6,7 @@ import me.TahaCheji.Main;
 import me.TahaCheji.itemData.GameWeaponData.GameWeapons;
 import me.TahaCheji.mobData.GameMob;
 import me.TahaCheji.mobData.GameMobBoss;
+import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
@@ -52,34 +53,6 @@ public class MobUtil implements Listener {
     }
 
     @EventHandler
-    public void onHit(EntityDamageByEntityEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
-            return;
-        }
-        if(e.getDamager() instanceof Arrow) {
-            return;
-        }
-        LivingEntity entity = (LivingEntity) e.getDamager();
-        Player player = (Player) e.getEntity();
-        for (GameMob mob : Main.getInstance().getActiveMobs()) {
-            if (entity instanceof Player) {
-                continue;
-            }
-            if (entity.getCustomName() == null) {
-                continue;
-            }
-            NBTCompound nbt = new NBTEntity(entity).getPersistentDataContainer();
-            if (!(nbt.hasKey("MobName")) || !(nbt.hasKey("MobBossName"))) {
-                continue;
-            }
-            if (!(NBTUtils.getEntityString(entity, "MobName").equalsIgnoreCase(NBTUtils.getEntityString(entity, "MobName"))) || !(NBTUtils.getEntityString(entity, "MobBossName").equalsIgnoreCase(NBTUtils.getEntityString(entity, "MobBossName")))) {
-                continue;
-            }
-            mob.onAbilityHit(player, entity);
-        }
-    }
-
-    @EventHandler
     public void onDeath(EntityDamageByEntityEvent e) {
         if (!(e.getDamager() instanceof Player)) {
             return;
@@ -90,11 +63,14 @@ public class MobUtil implements Listener {
             GameMob gameMob = getMob(NBTUtils.getEntityString(entity, "MobName"));
             if(gameMob != null) {
                 ItemStack itemStack = player.getItemInHand();
+                if(itemStack == null || itemStack.getType() == Material.AIR) {
+                    return;
+                }
                 GameWeapons originalGameWeapons = ItemUtil.getGameWeapon(itemStack);
                 if(originalGameWeapons == null) {
                     return;
                 }
-                player.setItemInHand(originalGameWeapons.getItemLevel().addXP(gameMob.getXp(), originalGameWeapons));
+                //player.setItemInHand(originalGameWeapons.getItemLevel().addXP(gameMob.getXp(), originalGameWeapons));
             }
         }
     }

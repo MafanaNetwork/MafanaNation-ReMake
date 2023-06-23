@@ -1,9 +1,6 @@
 package me.TahaCheji;
 
-import me.TahaCheji.adminCommand.PlayerCoinAdmin;
-import me.TahaCheji.adminCommand.PlayerInventoryAdmin;
-import me.TahaCheji.adminCommand.PlayerItemAdmin;
-import me.TahaCheji.adminCommand.PlayerMobAdmin;
+import me.TahaCheji.adminCommand.*;
 import me.TahaCheji.gameScoreboards.MainScoreboard;
 import me.TahaCheji.itemData.*;
 import me.TahaCheji.itemData.GameArmorData.GameArmor;
@@ -14,10 +11,13 @@ import me.TahaCheji.mobData.GameMob;
 import me.TahaCheji.mobData.GameMobBoss;
 import me.TahaCheji.playerData.GamePlayerCoins;
 import me.TahaCheji.playerData.GamePlayer;
-import me.TahaCheji.recipeData.GameRecipe;
+import me.TahaCheji.itemData.GameRecipeData.GameRecipe;
 import me.TahaCheji.sectionsData.GameSections;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -70,12 +70,32 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
        instance = this;
        playerGamePlayerCoins.connect();
+        List<World> worlds = Bukkit.getWorlds();
+
+        // Iterate through each world
+        for (World world : worlds) {
+            // Get all living entities in the world
+            List<LivingEntity> livingEntities = world.getLivingEntities();
+
+            // Iterate through each living entity and kill them
+            for (LivingEntity entity : livingEntities) {
+                // Exclude players from being killed, if desired
+                if (entity instanceof Player) {
+                    continue;
+                }
+
+                // Kill the living entity
+                entity.setHealth(0);
+            }
+        }
         String packageName = getClass().getPackage().getName();
         for(ArmorStand armorStand : armorStands) {
             armorStand.remove();
             armorStands.remove(armorStand);
         }
-
+        for(LivingEntity livingEntity : Bukkit.getWorld("world").getLivingEntities()) {
+            livingEntity.remove();
+        }
         for (Class<?> clazz : new Reflections(packageName, ".events").getSubTypesOf(Listener.class)) {
             try {
                 Listener listener = (Listener) clazz.getDeclaredConstructor().newInstance();
@@ -145,11 +165,14 @@ public final class Main extends JavaPlugin {
         getCommand("mfcoin").setExecutor(new PlayerCoinAdmin());
         getCommand("mfitem").setExecutor(new PlayerItemAdmin());
         getCommand("mfmob").setExecutor(new PlayerMobAdmin());
+        getCommand("mftp").setExecutor(new PlayerWorldTP());
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        for(GameMob gameMob : getActiveMobs()) {
+            gameMob.killMob();
+        }
     }
 
     public GamePlayer getGamePlayer(Player player){

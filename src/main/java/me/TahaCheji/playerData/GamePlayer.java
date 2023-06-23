@@ -5,6 +5,7 @@ import me.TahaCheji.Main;
 import me.TahaCheji.gameEvent.GamePlayerUseGameItem;
 import me.TahaCheji.gameUtil.ItemUtil;
 import me.TahaCheji.sectionsData.GameSections;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
@@ -26,7 +27,6 @@ public class GamePlayer {
     private BukkitTask playerStartUp;
     private BukkitTask itemRepeat;
     private GameSections gameSections = null;
-    public int coins;
 
 
     public GamePlayer(Player player) throws Exception {
@@ -49,52 +49,13 @@ public class GamePlayer {
     boolean hasSynced = false;
 
     public void setPlayerStartUp() {
-        if (Inv.getInstance().getInventoryDataHandler().isSyncComplete(player) && !hasSynced) {
-            try {
-                Main.getInstance().getMainScoreboard().updateScoreboard();
-                ItemUtil.registerWeaponsGameItems(player);
-                ItemUtil.registerBowGameItems(player);
-                ItemUtil.registerArmorGameItems(player);
-                ItemUtil.registerSpellsGameItems(player);
-                ItemUtil.registerStaffGameItems(player);
-                hasSynced = true;
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        for (GameSections gameSection : Main.getInstance().getGameSections()) {
-            Location sectionX = gameSection.getX();
-            Location sectionY = gameSection.getY();
-            Location playerLocation = player.getLocation();
-            if (playerLocation.getX() >= sectionX.getX() && playerLocation.getX() <= sectionY.getX()
-                    && playerLocation.getY() >= sectionX.getY() && playerLocation.getY() <= sectionY.getY()
-                    && playerLocation.getZ() >= sectionX.getZ() && playerLocation.getZ() <= sectionY.getZ()) {
-                setGameSections(gameSection);
-                gameSection.whileThere(player);
-            }
-        }
-
-        player.setHealthScaled(true);
-        player.setHealthScale(40);
-        ItemStack heldItem = player.getInventory().getItemInMainHand();
-        ItemStack[] armor = player.getInventory().getArmorContents();
-        gamePlayerStats.updateStats(heldItem, armor);
-        getPlayer().setSaturation(20);
-        gamePlayerStats.regenerateHealth();
-        gamePlayerStats.regenerateMana();
-
-        double maxHealth = gamePlayerStats.getMaxHealth();
-        double health = gamePlayerStats.getHealth();
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth);
-        player.setHealth(health);
-
-        getGamePlayerStats().setMobilityStats();
-
+        new GamePlayerStartUp(this);
         gamePlayerStats.actionBar(GamePlayer.this);
     }
 
     public void onJoin() throws Exception {
         setInventory();
+        player.teleport(new Location(Bukkit.getWorld("world"), 2353, 35, 3124));
         setGamePlayerStats(new GamePlayerStats(this));
         setGamePlayerCoins(new GamePlayerCoins());
         gamePlayerCoins.connect();

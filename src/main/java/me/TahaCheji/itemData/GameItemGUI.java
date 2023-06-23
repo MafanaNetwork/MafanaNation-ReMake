@@ -68,6 +68,26 @@ public class GameItemGUI implements Listener {
         gui.setItem(49, new GuiItem(greystainedglass));
         gui.setItem(6, 3, ItemBuilder.from(Material.PAPER).setName(ChatColor.DARK_GRAY + "Previous").asGuiItem(event -> gui.previous()));
         gui.setItem(6, 7, ItemBuilder.from(Material.PAPER).setName(ChatColor.DARK_GRAY + "Next").asGuiItem(event -> gui.next()));
+        for(GameItem gameWeapons : Main.getInstance().getGameItems()) {
+            if(gameWeapons instanceof GameWeapons || gameWeapons instanceof GameSpell || gameWeapons instanceof GameArmor || gameWeapons instanceof GameStaff ||
+                    gameWeapons instanceof GameBow) {
+                continue;
+            }
+            ItemStack itemStack = gameWeapons.getItem();
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            List<String> itemLore = new ArrayList<>();
+            if(itemMeta.getLore() != null) {
+                for (String string : itemMeta.getLore()) {
+                    itemLore.add(string);
+                }
+            }
+            itemLore.add("");
+            itemLore.add(ChatColor.GOLD + "Click To Get This Item");
+            itemMeta.setLore(itemLore);
+            itemStack.setItemMeta(itemMeta);
+            gui.addItem(new GuiItem(itemStack));
+
+        }
         for(GameWeapons gameWeapons : Main.getInstance().getOriginalGameWeapons()) {
             ItemStack itemStack = gameWeapons.getGameWeapon();
             ItemMeta itemMeta = itemStack.getItemMeta();
@@ -166,24 +186,22 @@ public class GameItemGUI implements Listener {
         for(GameItem gameItem : Main.getInstance().getGameItems()) {
             if(Objects.equals(gameItem.getItemUUID(), NBTUtils.getString(event.getCurrentItem(), "GameItemUUID"))) {
                 if(gameItem instanceof GameWeapons) {
-                    player.getInventory().addItem(((GameWeapons) gameItem).getGameWeapon());
-                    ((GameWeapons) gameItem).createNewInstance();
-                }
-                if(gameItem instanceof GameBow) {
-                    player.getInventory().addItem(((GameBow ) gameItem).getGameBow());
-                    ((GameBow) gameItem).createNewInstance();
-                }
-                if(gameItem instanceof GameStaff) {
-                    player.getInventory().addItem(((GameStaff) gameItem).getGameStaff());
-                    ((GameStaff) gameItem).createNewInstance();
-                }
-                if(gameItem instanceof GameSpell) {
-                    player.getInventory().addItem(((GameSpell) gameItem).getGameSpell());
-                    ((GameSpell) gameItem).createNewInstance();
-                }
-                if(gameItem instanceof GameArmor) {
-                    player.getInventory().addItem(((GameArmor) gameItem).getGameArmor());
-                    ((GameArmor) gameItem).createNewInstance();
+                    player.getInventory().addItem(((GameWeapons) gameItem).createNewInstance().getGameWeapon());
+                    return;
+                }else if(gameItem instanceof GameBow) {
+                    player.getInventory().addItem(((GameBow) gameItem).createNewInstance().getGameBow());
+                    return;
+                }else if(gameItem instanceof GameStaff) {
+                    player.getInventory().addItem(((GameStaff) gameItem).createNewInstance().getGameStaff());
+                    return;
+                }else if(gameItem instanceof GameSpell) {
+                    player.getInventory().addItem(((GameSpell) gameItem).createNewInstance().getGameSpell());
+                    return;
+                }else if(gameItem instanceof GameArmor) {
+                    player.getInventory().addItem(((GameArmor) gameItem).createNewInstance().getGameArmor());
+                    return;
+                }else {
+                    player.getInventory().addItem(gameItem.getItem());
                 }
             }
         }

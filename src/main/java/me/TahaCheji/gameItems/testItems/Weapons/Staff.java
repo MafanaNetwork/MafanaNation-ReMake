@@ -1,12 +1,10 @@
-package me.TahaCheji.gameItems.Weapons;
+package me.TahaCheji.gameItems.testItems.Weapons;
 
 import me.TahaCheji.Main;
 import me.TahaCheji.gameUtil.MobUtil;
 import me.TahaCheji.gameUtil.NBTUtils;
 import me.TahaCheji.itemData.*;
 import me.TahaCheji.itemData.GameStaffData.GameStaff;
-import me.TahaCheji.itemData.GameStaffData.GameStaffLevel;
-import me.TahaCheji.itemData.GameWeaponData.GameWeaponLevel;
 import me.TahaCheji.managers.DamageManager;
 import me.TahaCheji.mobData.GameMob;
 import org.bukkit.*;
@@ -23,23 +21,22 @@ public class Staff extends GameStaff {
         setMobility(298);
         setArmor(112);
         setGameAbility(new GameItemAbility("Abolish", ItemAbilityType.RIGHT_CLICK, 5,5 , 100, "In a 5 block radius strikes all mobs with lightning"));
-        setItemLevel(new GameStaffLevel(0, 20));
-        getItemLevel().setItem(getGameStaff());
+        setGameItemLevel(new GameItemLevel(this, 0, 20));
     }
 
     @Override
     public boolean rightClickAirAction(Player var1, ItemStack var2) {
-        CoolDown coolDown = new CoolDown(this, Main.getInstance().getGamePlayer(var1));
-        if(coolDown.ifCanUse(this)) {
+        GameItemCoolDown gameItemCoolDown = new GameItemCoolDown(this, Main.getInstance().getGamePlayer(var1));
+        if(gameItemCoolDown.ifCanUse(this)) {
             return false;
         }
-        coolDown.addPlayerToCoolDownStaff();
+        gameItemCoolDown.addPlayerToCoolDownStaff();
         playExpandingParticleCircle(var1);
 
         return true;
     }
-    double radius = 0.5; // Initial radius of the particle circle
-    double maxRadius = 5.0; // Maximum radius of the particle circle
+    double radius = 0.5;
+    double maxRadius = 5.0;
     private void playExpandingParticleCircle(Player player) {
         double expansionRate = (maxRadius - radius) / 5.0; // Rate at which the circle expands (duration: 5 seconds)
 

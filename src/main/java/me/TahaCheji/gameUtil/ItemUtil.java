@@ -4,6 +4,7 @@ import me.TahaCheji.Main;
 import me.TahaCheji.itemData.*;
 import me.TahaCheji.itemData.GameArmorData.GameArmor;
 import me.TahaCheji.itemData.GameStaffData.GameStaff;
+import me.TahaCheji.itemData.GameItemLevel;
 import me.TahaCheji.itemData.GameWeaponData.GameWeapons;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -95,201 +96,120 @@ public class ItemUtil {
         return dash;
     }
 
-    public static void registerWeaponsGameItems(Player player) throws InstantiationException, IllegalAccessException {
-        List<ItemStack> modifiedItems = new ArrayList<>();
-
-        for (ItemStack itemStack : player.getInventory()) {
+    public static void registerGameWeapons(Player player) throws InstantiationException, IllegalAccessException {
+        int i = -1;
+        for(ItemStack itemStack : player.getInventory()) {
+            i += 1;
             if (itemStack == null || itemStack.getType() == Material.AIR) {
-                modifiedItems.add(itemStack);
                 continue;
             }
             String gameItemUUID = NBTUtils.getString(itemStack, "GameItemUUID");
-            if (gameItemUUID != null) {
-                boolean modified = false; // Flag to track if the item has been modified
-
-                for (GameItem gameItem : Main.getInstance().getGameItems()) {
-                    if (gameItem.getItemUUID().equalsIgnoreCase(gameItemUUID)) {
-                        if (gameItem instanceof GameWeapons) {
-                            GameWeapons gameWeapons = ((GameWeapons) gameItem);
-                            if (!Main.getInstance().getGameWeapons().contains(gameWeapons)) {
-                                GameWeapons newGameWeapons = gameWeapons.createNewInstance();
-                                ItemStack item;
-                                item = newGameWeapons.getItemLevel().setLevelAndXP(NBTUtils.getInt(itemStack, "ItemWeaponLevel"), NBTUtils.getInt(itemStack, "ItemWeaponXP"), newGameWeapons);
-                                modifiedItems.add(item);
-                                modified = true; // Set the flag to indicate modification
-                                break; // Break out of the inner loop since modification is done
-                            }
-                        }
-                    }
-                }
-
-                if (!modified) {
-                    modifiedItems.add(itemStack); // Add the original item if no modification occurred
-                }
-            } else {
-                modifiedItems.add(itemStack); // Add the original item if it doesn't have a GameItemUUID
+            if (gameItemUUID == null) {
+                continue;
             }
-        }
-
-        // Update the modified items in the player's inventory
-        for (int i = 0; i < player.getInventory().getSize(); i++) {
-            if (modifiedItems.size() > i) {
-                if (modifiedItems.get(i) == null || modifiedItems.get(i).getType() == Material.AIR) {
-                    player.getInventory().setItem(i, null);
+            for (GameItem gameItem : Main.getInstance().getGameItems()) {
+                if (!gameItem.getItemUUID().equalsIgnoreCase(gameItemUUID)) {
                     continue;
                 }
-                GameWeapons gameWeapons = ItemUtil.getGameWeapon(modifiedItems.get(i));
-                if (gameWeapons != null) {
-                    player.getInventory().setItem(i, gameWeapons.getItemLevel().setLevelAndXP(NBTUtils.getInt(modifiedItems.get(i), "ItemWeaponLevel"), NBTUtils.getInt(modifiedItems.get(i), "ItemWeaponXP"), gameWeapons));
+                if (gameItem instanceof GameWeapons) {
+                    GameWeapons gameWeapons = ((GameWeapons) gameItem);
+                    if (Main.getInstance().getGameWeapons().contains(gameWeapons)) {
+                        continue;
+                    }
+                    GameWeapons newInstance = gameWeapons.createNewInstance();
+                    if(newInstance.getGameItemLevel() != null) {
+                        GameItemLevel gameWeaponLevel = new GameItemLevel(newInstance, NBTUtils.getInt(itemStack, "ItemWeaponLevel"), NBTUtils.getInt(itemStack, "ItemWeaponXP"));
+                        newInstance.setGameItemLevel(gameWeaponLevel);
+                    }
+                    player.getInventory().setItem(i, newInstance.getGameWeapon());
+                    System.out.println(i);
+                }
+            }
+        }
+    }
+    public static void registerGameSpells(Player player) throws InstantiationException, IllegalAccessException {
+        int i = -1;
+        for(ItemStack itemStack : player.getInventory()) {
+            i += 1;
+            if (itemStack == null || itemStack.getType() == Material.AIR) {
+                continue;
+            }
+            String gameItemUUID = NBTUtils.getString(itemStack, "GameItemUUID");
+            if (gameItemUUID == null) {
+                continue;
+            }
+            for (GameItem gameItem : Main.getInstance().getGameItems()) {
+                if (!gameItem.getItemUUID().equalsIgnoreCase(gameItemUUID)) {
+                    continue;
+                }
+                if (gameItem instanceof GameSpell) {
+                    GameSpell game = ((GameSpell) gameItem);
+                    if (Main.getInstance().getGameSpells().contains(game)) {
+                        continue;
+                    }
+                    GameSpell newInstance = game.createNewInstance();
+                    player.getInventory().setItem(i, newInstance.getGameSpell());
+                    System.out.println(i);
                 }
             }
         }
     }
 
-    public static void registerSpellsGameItems(Player player) throws InstantiationException, IllegalAccessException {
-        List<ItemStack> modifiedItems = new ArrayList<>();
-
-        for (ItemStack itemStack : player.getInventory()) {
+    public static void registerGameStaffs(Player player) throws InstantiationException, IllegalAccessException {
+        int i = -1;
+        for(ItemStack itemStack : player.getInventory()) {
+            i += 1;
             if (itemStack == null || itemStack.getType() == Material.AIR) {
-                modifiedItems.add(itemStack);
                 continue;
             }
             String gameItemUUID = NBTUtils.getString(itemStack, "GameItemUUID");
-            if (gameItemUUID != null) {
-                boolean modified = false; // Flag to track if the item has been modified
-
-                for (GameItem gameItem : Main.getInstance().getGameItems()) {
-                    if (gameItem.getItemUUID().equalsIgnoreCase(gameItemUUID)) {
-                        if (gameItem instanceof GameSpell) {
-                            GameSpell gameWeapons = ((GameSpell) gameItem);
-                            if (!Main.getInstance().getGameSpells().contains(gameWeapons)) {
-                                GameSpell newGameWeapons = gameWeapons.createNewInstance();
-                                modifiedItems.add(newGameWeapons.getGameSpell());
-                                modified = true; // Set the flag to indicate modification
-                                break; // Break out of the inner loop since modification is done
-                            }
-                        }
-                    }
-                }
-
-                if (!modified) {
-                    modifiedItems.add(itemStack); // Add the original item if no modification occurred
-                }
-            } else {
-                modifiedItems.add(itemStack); // Add the original item if it doesn't have a GameItemUUID
+            if (gameItemUUID == null) {
+                continue;
             }
-        }
-
-        // Update the modified items in the player's inventory
-        for (int i = 0; i < player.getInventory().getSize(); i++) {
-            if (modifiedItems.size() > i) {
-                if (modifiedItems.get(i) == null || modifiedItems.get(i).getType() == Material.AIR) {
-                    player.getInventory().setItem(i, null);
+            for (GameItem gameItem : Main.getInstance().getGameItems()) {
+                if (!gameItem.getItemUUID().equalsIgnoreCase(gameItemUUID)) {
                     continue;
                 }
-                GameSpell gameWeapons = ItemUtil.getGameSpell(modifiedItems.get(i));
-                if (gameWeapons != null) {
-                    player.getInventory().setItem(i, gameWeapons.getGameSpell());
+                if (gameItem instanceof GameStaff) {
+                    GameStaff game = ((GameStaff) gameItem);
+                    if (Main.getInstance().getGameStaffs().contains(game)) {
+                        continue;
+                    }
+                    GameStaff newInstance = game.createNewInstance();
+                    if(newInstance.getGameItemLevel() != null) {
+                        GameItemLevel gameWeaponLevel = new GameItemLevel(newInstance, NBTUtils.getInt(itemStack, "ItemWeaponLevel"), NBTUtils.getInt(itemStack, "ItemWeaponXP"));
+                        newInstance.setGameItemLevel(gameWeaponLevel);
+                    }
+                    player.getInventory().setItem(i, newInstance.getGameStaff());
+                    System.out.println(i);
                 }
             }
         }
     }
 
-    public static void registerStaffGameItems(Player player) throws InstantiationException, IllegalAccessException {
-        List<ItemStack> modifiedItems = new ArrayList<>();
-
-        for (ItemStack itemStack : player.getInventory()) {
+    public static void registerGameBows(Player player) throws InstantiationException, IllegalAccessException {
+        int i = -1;
+        for(ItemStack itemStack : player.getInventory()) {
+            i += 1;
             if (itemStack == null || itemStack.getType() == Material.AIR) {
-                modifiedItems.add(itemStack);
                 continue;
             }
             String gameItemUUID = NBTUtils.getString(itemStack, "GameItemUUID");
-            if (gameItemUUID != null) {
-                boolean modified = false; // Flag to track if the item has been modified
-
-                for (GameItem gameItem : Main.getInstance().getGameItems()) {
-                    if (gameItem.getItemUUID().equalsIgnoreCase(gameItemUUID)) {
-                        if (gameItem instanceof GameStaff) {
-                            GameStaff gameStaff = ((GameStaff) gameItem);
-                            if (!Main.getInstance().getGameStaffs().contains(gameStaff)) {
-                                GameStaff newGameWeapons = gameStaff.createNewInstance();
-                                ItemStack item;
-                                item = newGameWeapons.getItemLevel().setLevelAndXP(NBTUtils.getInt(itemStack, "ItemWeaponLevel"), NBTUtils.getInt(itemStack, "ItemWeaponXP"), newGameWeapons);
-                                modifiedItems.add(item);
-                                modified = true; // Set the flag to indicate modification
-                                break; // Break out of the inner loop since modification is done
-                            }
-                        }
-                    }
-                }
-
-                if (!modified) {
-                    modifiedItems.add(itemStack); // Add the original item if no modification occurred
-                }
-            } else {
-                modifiedItems.add(itemStack); // Add the original item if it doesn't have a GameItemUUID
-            }
-        }
-
-        // Update the modified items in the player's inventory
-        for (int i = 0; i < player.getInventory().getSize(); i++) {
-            if (modifiedItems.size() > i) {
-                if (modifiedItems.get(i) == null || modifiedItems.get(i).getType() == Material.AIR) {
-                    player.getInventory().setItem(i, null);
-                    continue;
-                }
-                GameStaff gameWeapons = ItemUtil.getGameStaff(modifiedItems.get(i));
-                if (gameWeapons != null) {
-                    player.getInventory().setItem(i, gameWeapons.getItemLevel().setLevelAndXP(NBTUtils.getInt(modifiedItems.get(i), "ItemWeaponLevel"), NBTUtils.getInt(modifiedItems.get(i), "ItemWeaponXP"), gameWeapons));
-                }
-            }
-        }
-    }
-
-    public static void registerBowGameItems(Player player) throws InstantiationException, IllegalAccessException {
-        List<ItemStack> modifiedItems = new ArrayList<>();
-
-        for (ItemStack itemStack : player.getInventory()) {
-            if (itemStack == null || itemStack.getType() == Material.AIR) {
-                modifiedItems.add(itemStack);
+            if (gameItemUUID == null) {
                 continue;
             }
-            String gameItemUUID = NBTUtils.getString(itemStack, "GameItemUUID");
-            if (gameItemUUID != null) {
-                boolean modified = false; // Flag to track if the item has been modified
-
-                for (GameItem gameItem : Main.getInstance().getGameItems()) {
-                    if (gameItem.getItemUUID().equalsIgnoreCase(gameItemUUID)) {
-                        if (gameItem instanceof GameBow) {
-                            GameBow gameWeapons = ((GameBow) gameItem);
-                            if (!Main.getInstance().getGameBows().contains(gameWeapons)) {
-                                GameBow newGameWeapons = gameWeapons.createNewInstance();
-                                modifiedItems.add(newGameWeapons.getGameBow());
-                                modified = true; // Set the flag to indicate modification
-                                break; // Break out of the inner loop since modification is done
-                            }
-                        }
-                    }
-                }
-
-                if (!modified) {
-                    modifiedItems.add(itemStack); // Add the original item if no modification occurred
-                }
-            } else {
-                modifiedItems.add(itemStack); // Add the original item if it doesn't have a GameItemUUID
-            }
-        }
-
-        // Update the modified items in the player's inventory
-        for (int i = 0; i < player.getInventory().getSize(); i++) {
-            if (modifiedItems.size() > i) {
-                if (modifiedItems.get(i) == null || modifiedItems.get(i).getType() == Material.AIR) {
-                    player.getInventory().setItem(i, null);
+            for (GameItem gameItem : Main.getInstance().getGameItems()) {
+                if (!gameItem.getItemUUID().equalsIgnoreCase(gameItemUUID)) {
                     continue;
                 }
-                GameBow gameWeapons = ItemUtil.getGameBow(modifiedItems.get(i));
-                if (gameWeapons != null) {
-                    player.getInventory().setItem(i, gameWeapons.getGameBow());
+                if (gameItem instanceof GameBow) {
+                    GameBow game = ((GameBow) gameItem);
+                    if (Main.getInstance().getGameBows().contains(game)) {
+                        continue;
+                    }
+                    GameBow newInstance = game.createNewInstance();
+                    player.getInventory().setItem(i, newInstance.getGameBow());
+                    System.out.println(i);
                 }
             }
         }
@@ -315,8 +235,8 @@ public class ItemUtil {
                                 GameArmor newGameArmor = gameArmor.createNewInstance();
                                 modifiedItems.add(newGameArmor.getGameArmor());
 
-                                modified = true; // Set the flag to indicate modification
-                                break; // Break out of the inner loop since modification is done
+                                modified = true;
+                                break;
                             }
                         }
                     }

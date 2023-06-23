@@ -8,12 +8,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 
-public class CoolDown {
+public class GameItemCoolDown {
 
     private final GameItem gameItem;
     private final GamePlayer gamePlayer;
 
-    public CoolDown(GameItem gameItem, GamePlayer gamePlayer) {
+    public GameItemCoolDown(GameItem gameItem, GamePlayer gamePlayer) {
         this.gameItem = gameItem;
         this.gamePlayer = gamePlayer;
     }

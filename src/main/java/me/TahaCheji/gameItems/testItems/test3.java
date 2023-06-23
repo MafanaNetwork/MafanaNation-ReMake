@@ -1,4 +1,4 @@
-package me.TahaCheji.gameItems;
+package me.TahaCheji.gameItems.testItems;
 
 import me.TahaCheji.itemData.GameArmorData.GameArmor;
 import me.TahaCheji.itemData.ItemRarity;

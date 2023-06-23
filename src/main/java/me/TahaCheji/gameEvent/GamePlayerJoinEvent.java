@@ -1,8 +1,6 @@
 package me.TahaCheji.gameEvent;
 
 import me.TahaCheji.Main;
-import me.TahaCheji.gameItems.Weapons.Sword;
-import me.TahaCheji.gameItems.test;
 import me.TahaCheji.playerData.GamePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

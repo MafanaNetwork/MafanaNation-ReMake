@@ -1,4 +1,4 @@
-package me.TahaCheji.recipeData;
+package me.TahaCheji.itemData.GameRecipeData;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

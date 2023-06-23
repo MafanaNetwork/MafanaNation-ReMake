@@ -1,4 +1,4 @@
-package me.TahaCheji.gameItems;
+package me.TahaCheji.gameItems.testItems;
 
 import me.TahaCheji.Main;
 import me.TahaCheji.itemData.*;
@@ -14,11 +14,11 @@ public class testSpell extends GameSpell {
 
     @Override
     public boolean rightClickAirAction(Player var1, ItemStack var2) {
-        CoolDown coolDown = new CoolDown(this, Main.getInstance().getGamePlayer(var1));
-        if(coolDown.ifCanUse(this)) {
+        GameItemCoolDown gameItemCoolDown = new GameItemCoolDown(this, Main.getInstance().getGamePlayer(var1));
+        if(gameItemCoolDown.ifCanUse(this)) {
             return false;
         }
-        coolDown.addPlayerToCoolDownSpell();
+        gameItemCoolDown.addPlayerToCoolDownSpell();
         var1.sendMessage("Nutted");
         destroy(var2, 1);
         return true;
