@@ -1,6 +1,7 @@
 package me.TahaCheji.itemData.GameRecipeData;
 
 import me.TahaCheji.Main;
+import me.TahaCheji.gameUtil.ItemUtil;
 import me.TahaCheji.gameUtil.NBTUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -42,7 +43,7 @@ public class GameRecipe {
         return result;
     }
 
-    public void craftItem(Player player, Inventory gui) {
+    public void craftItem(Player player, Inventory gui) throws InstantiationException, IllegalAccessException {
         ItemStack[] craftingItems = new ItemStack[9];
 
         craftingItems[0] = gui.getItem(1);
@@ -60,6 +61,7 @@ public class GameRecipe {
         }
 
         ItemStack resultItem = getResult().clone();
+
         ItemStack slot10 = craftingItems[3];
         if (slot10 != null) {
             int requiredAmount = getIngredients().get(3).getAmount();
@@ -166,6 +168,11 @@ public class GameRecipe {
         gui.setItem(14, null);
         itemArmorStand(resultItem, player);
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10f, 0f);
+        ItemUtil.registerGameWeapons(player);
+        ItemUtil.registerGameBows(player);
+        ItemUtil.registerArmorGameItems(player);
+        ItemUtil.registerGameSpells(player);
+        ItemUtil.registerGameStaffs(player);
     }
 
     public static void itemArmorStand(ItemStack result, Player player) {

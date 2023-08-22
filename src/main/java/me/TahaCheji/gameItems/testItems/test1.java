@@ -17,7 +17,7 @@ public class test1 extends GameArmor {
         setHealth(1);
         setArmor(1);
         setArmorSet(testSet.getInstance());
-        testSet.getInstance().setHelmet(getGameArmor());
+        testSet.getInstance().setHelmet(this);
     }
 
 }

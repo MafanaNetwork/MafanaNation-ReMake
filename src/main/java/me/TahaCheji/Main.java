@@ -9,10 +9,11 @@ import me.TahaCheji.itemData.GameStaffData.GameStaff;
 import me.TahaCheji.itemData.GameWeaponData.GameWeapons;
 import me.TahaCheji.mobData.GameMob;
 import me.TahaCheji.mobData.GameMobBoss;
-import me.TahaCheji.playerData.GamePlayerCoins;
 import me.TahaCheji.playerData.GamePlayer;
 import me.TahaCheji.itemData.GameRecipeData.GameRecipe;
 import me.TahaCheji.sectionsData.GameSections;
+import me.tahacheji.mafananetwork.MafanaBank;
+import me.tahacheji.mafananetwork.data.GamePlayerCoins;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -33,7 +34,7 @@ public final class Main extends JavaPlugin {
     private MainScoreboard mainScoreboard = new MainScoreboard();
 
     private List<GamePlayer> gamePlayers = new ArrayList<>();
-    private GamePlayerCoins playerGamePlayerCoins = new GamePlayerCoins();
+    private GamePlayerCoins playerGamePlayerCoins = null;
     public static Main instance;
 
     private List<GameItem> gameItems = new ArrayList<>();
@@ -68,73 +69,69 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-       instance = this;
-       playerGamePlayerCoins.connect();
+        instance = this;
+        playerGamePlayerCoins = MafanaBank.getInstance().getGamePlayerCoins();
         List<World> worlds = Bukkit.getWorlds();
-
-        // Iterate through each world
         for (World world : worlds) {
-            // Get all living entities in the world
             List<LivingEntity> livingEntities = world.getLivingEntities();
-
-            // Iterate through each living entity and kill them
             for (LivingEntity entity : livingEntities) {
-                // Exclude players from being killed, if desired
                 if (entity instanceof Player) {
                     continue;
                 }
-
-                // Kill the living entity
                 entity.setHealth(0);
             }
         }
         String packageName = getClass().getPackage().getName();
-        for(ArmorStand armorStand : armorStands) {
+        for (ArmorStand armorStand : armorStands) {
             armorStand.remove();
             armorStands.remove(armorStand);
         }
-        for(LivingEntity livingEntity : Bukkit.getWorld("world").getLivingEntities()) {
+        for (LivingEntity livingEntity : Bukkit.getWorld("world").getLivingEntities()) {
             livingEntity.remove();
         }
         for (Class<?> clazz : new Reflections(packageName, ".events").getSubTypesOf(Listener.class)) {
             try {
                 Listener listener = (Listener) clazz.getDeclaredConstructor().newInstance();
                 getServer().getPluginManager().registerEvents(listener, this);
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-                e.printStackTrace();
+            } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                     NoSuchMethodException ignored) {
+
             }
         }
         for (Class<?> clazz : new Reflections(packageName, ".events").getSubTypesOf(GameSections.class)) {
             try {
                 GameSections listener = (GameSections) clazz.getDeclaredConstructor().newInstance();
                 getGameSections().add(listener);
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-                e.printStackTrace();
+            } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                     NoSuchMethodException ignored) {
+
             }
         }
         for (Class<?> clazz : new Reflections(packageName, ".events").getSubTypesOf(GameRecipe.class)) {
             try {
                 GameRecipe listener = (GameRecipe) clazz.getDeclaredConstructor().newInstance();
                 getGameRecipes().add(listener.getInstance());
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-                e.printStackTrace();
+            } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                     NoSuchMethodException ignored) {
             }
         }
         for (Class<?> clazz : new Reflections(packageName, ".events").getSubTypesOf(GameMob.class)) {
             try {
                 GameMob getClass = (GameMob) clazz.getDeclaredConstructor().newInstance();
                 getClass.registerMob();
-                if(getClass instanceof GameMobBoss) {
+                if (getClass instanceof GameMobBoss) {
                     gameBosses.add((GameMobBoss) getClass);
                 }
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException ignored) {
+            } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                     NoSuchMethodException ignored) {
             }
         }
         for (Class<?> clazz : new Reflections(packageName, ".events").getSubTypesOf(GameArmorSet.class)) {
             try {
                 GameArmorSet getClass = (GameArmorSet) clazz.getDeclaredConstructor().newInstance();
                 getGameArmorSet().add(getClass);
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException ignored) {
+            } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                     NoSuchMethodException ignored) {
             }
         }
         for (Class<?> clazz : new Reflections(packageName).getSubTypesOf(GameItem.class)) {
@@ -170,23 +167,23 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for(GameMob gameMob : getActiveMobs()) {
+        for (GameMob gameMob : getActiveMobs()) {
             gameMob.killMob();
         }
     }
 
-    public GamePlayer getGamePlayer(Player player){
-        for (GamePlayer gamePlayer : getGamePlayers()){
-            if(gamePlayer.getPlayer().getUniqueId().equals(player.getUniqueId())){
+    public GamePlayer getGamePlayer(Player player) {
+        for (GamePlayer gamePlayer : getGamePlayers()) {
+            if (gamePlayer.getPlayer().getUniqueId().equals(player.getUniqueId())) {
                 return gamePlayer;
             }
         }
         return null;
     }
 
-    public GamePlayer getGamePlayer(OfflinePlayer player){
-        for (GamePlayer gamePlayer : getGamePlayers()){
-            if(gamePlayer.getName().equals(player.getName())){
+    public GamePlayer getGamePlayer(OfflinePlayer player) {
+        for (GamePlayer gamePlayer : getGamePlayers()) {
+            if (gamePlayer.getName().equals(player.getName())) {
                 return gamePlayer;
             }
         }
@@ -194,59 +191,106 @@ public final class Main extends JavaPlugin {
     }
 
 
-    public List<GameRecipe> getGameRecipes() {return gameGameRecipes;}
-    public List<GameSections> getGameSections() {return gameSections;}
-    public MainScoreboard getMainScoreboard() {return mainScoreboard;}
-    public HashMap<GameItem, GamePlayer> getCoolDownHashMap() {return coolDownHashMap;}
-    public List<GameArmorSet> getGameArmorSet() {return gameArmorSet;}
-    public List<ArmorStand> getArmorStands() {return armorStands;}
-    public List<GameMob> getGameMobs() {return gameMobs;}
-    public List<GameMob> getActiveMobs() {return activeMobs;}
-    public List<GameMobBoss> getGameBosses() {return gameBosses;}
-    public List<GameMobBoss> getActiveBoss() {return activeBoss;}
-    public HashMap<Player, GameMobBoss> getPlayerBossFight() {return playerBossFight;}
+    public List<GameRecipe> getGameRecipes() {
+        return gameGameRecipes;
+    }
+
+    public List<GameSections> getGameSections() {
+        return gameSections;
+    }
+
+    public MainScoreboard getMainScoreboard() {
+        return mainScoreboard;
+    }
+
+    public HashMap<GameItem, GamePlayer> getCoolDownHashMap() {
+        return coolDownHashMap;
+    }
+
+    public List<GameArmorSet> getGameArmorSet() {
+        return gameArmorSet;
+    }
+
+    public List<ArmorStand> getArmorStands() {
+        return armorStands;
+    }
+
+    public List<GameMob> getGameMobs() {
+        return gameMobs;
+    }
+
+    public List<GameMob> getActiveMobs() {
+        return activeMobs;
+    }
+
+    public List<GameMobBoss> getGameBosses() {
+        return gameBosses;
+    }
+
+    public List<GameMobBoss> getActiveBoss() {
+        return activeBoss;
+    }
+
+    public HashMap<Player, GameMobBoss> getPlayerBossFight() {
+        return playerBossFight;
+    }
+
     public List<GameWeapons> getGameWeapons() {
         return gameWeapons;
     }
+
     public List<GameStaff> getGameStaffs() {
         return gameStaffs;
     }
+
     public List<GameSpell> getGameSpells() {
         return gameSpells;
     }
+
     public List<GameArmor> getGameArmors() {
         return gameArmors;
     }
+
     public List<GameBow> getGameBows() {
         return gameBows;
     }
+
     public List<GameBow> getOriginalGameBow() {
         return originalGameBow;
     }
+
     public List<GameSpell> getOriginalGameSpells() {
         return originalGameSpells;
     }
+
     public List<GameStaff> getOriginalGameStaffs() {
         return originalGameStaffs;
     }
+
     public GamePlayerCoins getPlayerGamePlayerCoins() {
         return playerGamePlayerCoins;
     }
+
     public List<GameArmor> getOriginalGameArmor() {
         return originalGameArmor;
     }
+
     public List<GameItem> getGameItems() {
         return gameItems;
     }
+
     public List<GameWeapons> getOriginalGameWeapons() {
         return originalGameWeapons;
     }
+
     public GamePlayerCoins getPlayerCoins() {
         return playerGamePlayerCoins;
     }
+
     public List<GamePlayer> getGamePlayers() {
         return gamePlayers;
     }
+
     public static Main getInstance() {
         return instance;
     }

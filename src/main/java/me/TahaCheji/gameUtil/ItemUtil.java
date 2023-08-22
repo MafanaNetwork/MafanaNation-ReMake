@@ -1,14 +1,17 @@
 package me.TahaCheji.gameUtil;
 
+import de.tr7zw.nbtapi.NBTItem;
 import me.TahaCheji.Main;
 import me.TahaCheji.itemData.*;
 import me.TahaCheji.itemData.GameArmorData.GameArmor;
 import me.TahaCheji.itemData.GameStaffData.GameStaff;
 import me.TahaCheji.itemData.GameItemLevel;
 import me.TahaCheji.itemData.GameWeaponData.GameWeapons;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,12 +124,24 @@ public class ItemUtil {
                         GameItemLevel gameWeaponLevel = new GameItemLevel(newInstance, NBTUtils.getInt(itemStack, "ItemWeaponLevel"), NBTUtils.getInt(itemStack, "ItemWeaponXP"));
                         newInstance.setGameItemLevel(gameWeaponLevel);
                     }
+                    if(NBTUtils.getBoolean(itemStack, "RENTED")) {
+                        ItemStack item = newInstance.getGameWeapon();
+                        ItemMeta itemMeta = item.getItemMeta();
+                        List<String> lore = itemMeta.getLore();
+                        lore.add("");
+                        lore.add(ChatColor.DARK_RED + "*MafanaMarket Rentables*");
+                        itemMeta.setLore(lore);
+                        item.setItemMeta(itemMeta);
+                        item = NBTUtils.setBoolean(itemStack, "RENTED", true);
+                        player.getInventory().setItem(i, item);
+                        continue;
+                    }
                     player.getInventory().setItem(i, newInstance.getGameWeapon());
-                    System.out.println(i);
                 }
             }
         }
     }
+
     public static void registerGameSpells(Player player) throws InstantiationException, IllegalAccessException {
         int i = -1;
         for(ItemStack itemStack : player.getInventory()) {
@@ -149,7 +164,6 @@ public class ItemUtil {
                     }
                     GameSpell newInstance = game.createNewInstance();
                     player.getInventory().setItem(i, newInstance.getGameSpell());
-                    System.out.println(i);
                 }
             }
         }
@@ -180,8 +194,19 @@ public class ItemUtil {
                         GameItemLevel gameWeaponLevel = new GameItemLevel(newInstance, NBTUtils.getInt(itemStack, "ItemWeaponLevel"), NBTUtils.getInt(itemStack, "ItemWeaponXP"));
                         newInstance.setGameItemLevel(gameWeaponLevel);
                     }
+                    if(NBTUtils.getBoolean(itemStack, "RENTED")) {
+                        ItemStack item = newInstance.getGameStaff();
+                        ItemMeta itemMeta = item.getItemMeta();
+                        List<String> lore = itemMeta.getLore();
+                        lore.add("");
+                        lore.add(ChatColor.DARK_RED + "*MafanaMarket Rentables*");
+                        itemMeta.setLore(lore);
+                        item.setItemMeta(itemMeta);
+                        item = NBTUtils.setBoolean(itemStack, "RENTED", true);
+                        player.getInventory().setItem(i, item);
+                        continue;
+                    }
                     player.getInventory().setItem(i, newInstance.getGameStaff());
-                    System.out.println(i);
                 }
             }
         }
@@ -208,8 +233,19 @@ public class ItemUtil {
                         continue;
                     }
                     GameBow newInstance = game.createNewInstance();
+                    if(NBTUtils.getBoolean(itemStack, "RENTED")) {
+                        ItemStack item = newInstance.getGameBow();
+                        ItemMeta itemMeta = item.getItemMeta();
+                        List<String> lore = itemMeta.getLore();
+                        lore.add("");
+                        lore.add(ChatColor.DARK_RED + "*MafanaMarket Rentables*");
+                        itemMeta.setLore(lore);
+                        item.setItemMeta(itemMeta);
+                        item = NBTUtils.setBoolean(itemStack, "RENTED", true);
+                        player.getInventory().setItem(i, item);
+                        continue;
+                    }
                     player.getInventory().setItem(i, newInstance.getGameBow());
-                    System.out.println(i);
                 }
             }
         }
@@ -233,7 +269,19 @@ public class ItemUtil {
                             GameArmor gameArmor = ((GameArmor) gameItem);
                             if (!Main.getInstance().getGameArmors().contains(gameArmor)) {
                                 GameArmor newGameArmor = gameArmor.createNewInstance();
-                                modifiedItems.add(newGameArmor.getGameArmor());
+                                if(NBTUtils.getBoolean(itemStack, "RENTED")) {
+                                    ItemStack item = newGameArmor.getGameArmor();
+                                    ItemMeta itemMeta = item.getItemMeta();
+                                    List<String> lore = itemMeta.getLore();
+                                    lore.add("");
+                                    lore.add(ChatColor.DARK_RED + "*MafanaMarket Rentables*");
+                                    itemMeta.setLore(lore);
+                                    item.setItemMeta(itemMeta);
+                                    item = NBTUtils.setBoolean(itemStack, "RENTED", true);
+                                    modifiedItems.add(item);
+                                } else {
+                                    modifiedItems.add(newGameArmor.getGameArmor());
+                                }
 
                                 modified = true;
                                 break;
@@ -260,7 +308,19 @@ public class ItemUtil {
                 }
                 GameArmor gameArmor = ItemUtil.getGameArmor(modifiedItems.get(i));
                 if (gameArmor != null) {
-                    armorContents[i] = gameArmor.getGameArmor();
+                    if(NBTUtils.getBoolean(armorContents[i], "RENTED")) {
+                        ItemStack item = gameArmor.getGameArmor();
+                        ItemMeta itemMeta = item.getItemMeta();
+                        List<String> lore = itemMeta.getLore();
+                        lore.add("");
+                        lore.add(ChatColor.DARK_RED + "*MafanaMarket Rentables*");
+                        itemMeta.setLore(lore);
+                        item.setItemMeta(itemMeta);
+                        item = NBTUtils.setBoolean(item, "RENTED", true);
+                        armorContents[i] = item;
+                    } else {
+                        armorContents[i] = gameArmor.getGameArmor();
+                    }
                 }
             }
         }

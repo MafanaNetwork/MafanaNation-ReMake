@@ -1,12 +1,15 @@
 package me.TahaCheji.itemData;
 
+import de.tr7zw.nbtapi.NBTItem;
 import me.TahaCheji.gameUtil.ItemStatUtil;
 import me.TahaCheji.gameUtil.NBTUtils;
 import me.TahaCheji.itemData.GameItem;
 import me.TahaCheji.itemData.GameItemLevelXPTo;
 import me.TahaCheji.itemData.GameStaffData.GameStaff;
 import me.TahaCheji.itemData.GameWeaponData.GameWeapons;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -43,6 +46,7 @@ public class GameItemLevel {
                 itemMeta.setDisplayName(ChatColor.DARK_GRAY + "[" + getLevel() + "] " + gameWeapons.getItemRarity().getColor() + gameWeapons.getName());
                 if (i >= 0 && i < lore.size()) {
                     lore.set(i, ChatColor.GRAY + "[" + getLevel() + "] XP " + getXp() + " / " + GameItemLevelXPTo.getXpTo(this).getXp());
+
                     itemMeta.setLore(lore);
                     item.setItemMeta(itemMeta);
                 }
@@ -105,11 +109,19 @@ public class GameItemLevel {
         return gameItem;
     }
 
-    public void addXP(int i) {
+    public void addXP(Player player, int i, ItemStack getRaw) {
         this.xp = getXp() + i;
+        if (this.xp >= GameItemLevelXPTo.getXpTo(this).getXp()) {
+            addLevel(player, 1, getRaw);
+        }
+        GameItemXpAddEvent event = new GameItemXpAddEvent(player, this, getRaw, i);
+        Bukkit.getPluginManager().callEvent(event);
     }
-    public void addLevel(int i) {
+
+    public void addLevel(Player player, int i, ItemStack getRaw) {
         this.level = getLevel() + i;
+        GameItemLevelUpEvent event = new GameItemLevelUpEvent(player, this, getRaw, i);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     public void setLevel(int level) {

@@ -39,14 +39,14 @@ public class PlayerItemAdmin implements CommandExecutor {
                 ItemStack itemStack = ((Player) sender).getItemInHand();
                 GameWeapons gameWeapon = ItemUtil.getGameWeapon(itemStack);
                 assert gameWeapon != null;
-                gameWeapon.getGameItemLevel().addLevel(Integer.parseInt(args[1]));
+                gameWeapon.getGameItemLevel().addLevel(player, Integer.parseInt(args[1]), itemStack);
                 player.setItemInHand(gameWeapon.getGameWeapon());
             }
             if (args[0].equalsIgnoreCase("levelmage")) {
                 ItemStack itemStack = ((Player) sender).getItemInHand();
                 GameStaff gameStaff = ItemUtil.getGameStaff(itemStack);
                 assert gameStaff != null;
-                gameStaff.getGameItemLevel().addLevel(Integer.parseInt(args[1]));
+                gameStaff.getGameItemLevel().addLevel(player, Integer.parseInt(args[1]), itemStack);
                 player.setItemInHand(gameStaff.getGameStaff());
             }
             if(args[0].equalsIgnoreCase("check")) {
@@ -58,14 +58,14 @@ public class PlayerItemAdmin implements CommandExecutor {
                 ItemStack itemStack = ((Player) sender).getItemInHand();
                 GameWeapons gameWeapon = ItemUtil.getGameWeapon(itemStack);
                 assert gameWeapon != null;
-                gameWeapon.getGameItemLevel().addXP(Integer.parseInt(args[1]));
+                gameWeapon.getGameItemLevel().addXP(player, Integer.parseInt(args[1]), itemStack);
                 player.setItemInHand(gameWeapon.getGameWeapon());
             }
             if (args[0].equalsIgnoreCase("xpmage")) {
                 ItemStack itemStack = ((Player) sender).getItemInHand();
                 GameStaff gameStaff = ItemUtil.getGameStaff(itemStack);
                 assert gameStaff != null;
-                gameStaff.getGameItemLevel().addXP(Integer.parseInt(args[1]));
+                gameStaff.getGameItemLevel().addXP(player, Integer.parseInt(args[1]), itemStack);
                 player.setItemInHand(gameStaff.getGameStaff());
             }
             if(args[0].equalsIgnoreCase("items")) {

@@ -1,12 +1,12 @@
 package me.TahaCheji.adminCommand;
 
+import me.TahaCheji.GamePlayerInventory;
 import me.TahaCheji.Inv;
 import me.TahaCheji.InventoryDataHandler;
 import me.TahaCheji.Main;
 import me.TahaCheji.objects.DatabaseInventoryData;
 import me.TahaCheji.playerData.GUI.PlayerInventoryGUI;
 import me.TahaCheji.playerData.GamePlayer;
-import me.TahaCheji.playerData.GamePlayerInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -63,7 +63,7 @@ public class PlayerInventoryAdmin implements CommandExecutor {
                 }
                 GamePlayer gamePlayer = Main.getInstance().getGamePlayer(commandPlayer);
                 try {
-                    GamePlayerInventory inventory = new GamePlayerInventory(gamePlayer);
+                    GamePlayerInventory inventory = new GamePlayerInventory(Inv.getInstance(), gamePlayer.getPlayer());
                     PlayerInventoryGUI inventoryGUI = new PlayerInventoryGUI();
                     inventoryGUI.createGUI(inventory.getInventoryItems(), inventory.getInventoryArmor(), gamePlayer.getPlayer(), player);
                     inventoryPlayer.add(commandPlayer);

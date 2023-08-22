@@ -17,7 +17,7 @@ public class test2 extends GameArmor {
         setHealth(1);
         setArmor(1);
         setArmorSet(testSet.getInstance());
-        testSet.getInstance().setLeggings(getGameArmor());
+        testSet.getInstance().setLeggings(this);
     }
 
 }

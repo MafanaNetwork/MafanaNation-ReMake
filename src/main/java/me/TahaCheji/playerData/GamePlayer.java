@@ -1,10 +1,12 @@
 package me.TahaCheji.playerData;
 
+import me.TahaCheji.GamePlayerInventory;
 import me.TahaCheji.Inv;
 import me.TahaCheji.Main;
 import me.TahaCheji.gameEvent.GamePlayerUseGameItem;
 import me.TahaCheji.gameUtil.ItemUtil;
 import me.TahaCheji.sectionsData.GameSections;
+import me.tahacheji.mafananetwork.data.GamePlayerCoins;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -55,7 +57,9 @@ public class GamePlayer {
 
     public void onJoin() throws Exception {
         setInventory();
-        player.teleport(new Location(Bukkit.getWorld("world"), 2353, 35, 3124));
+        if(!player.isOp()) {
+            player.teleport(new Location(Bukkit.getWorld("world"), 2353, 35, 3124));
+        }
         setGamePlayerStats(new GamePlayerStats(this));
         setGamePlayerCoins(new GamePlayerCoins());
         gamePlayerCoins.connect();
@@ -88,11 +92,11 @@ public class GamePlayer {
     }
 
     public void setInventory() throws Exception {
-        this.inventory = new GamePlayerInventory(this);
+        this.inventory = new GamePlayerInventory(Inv.getInstance(), getPlayer());
     }
 
     public void setOfflinePlayerInventory(OfflinePlayer offlinePlayer) throws Exception {
-        this.inventory = new GamePlayerInventory(offlinePlayer);
+        this.inventory = new GamePlayerInventory(Inv.getInstance(), offlinePlayer);
     }
 
     public GamePlayerInventory getInventory() {

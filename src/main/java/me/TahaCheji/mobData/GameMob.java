@@ -111,7 +111,6 @@ public class GameMob implements GameMobEvents {
     public void onMobDeath(Player player) {
         onDeath(player, entity);
         tryDropLoot(entity.getLocation(), player);
-        System.out.println(1);
         entity.setHealth(0);
         if (this instanceof GameMobBoss) {
             Main.getInstance().getActiveBoss().remove(this);

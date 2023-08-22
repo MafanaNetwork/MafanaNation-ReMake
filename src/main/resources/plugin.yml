@@ -1,4 +1,4 @@
-depend: [MafanaInventoryAPI, NBTAPI]
+depend: [MafanaInventoryAPI, NBTAPI, MafanaBank]
 name: MafanaNation
 version: '${project.version}'
 main: me.TahaCheji.Main

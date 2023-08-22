@@ -29,7 +29,7 @@ public class GameRecipeEvent implements Listener {
     }
 
     @EventHandler
-    public void onClick(InventoryClickEvent e) {
+    public void onClick(InventoryClickEvent e) throws InstantiationException, IllegalAccessException {
         Player player = (Player) e.getWhoClicked();
         if (!(ChatColor.stripColor(e.getView().getTitle()).equals("MafanaCraft"))) {
             return;

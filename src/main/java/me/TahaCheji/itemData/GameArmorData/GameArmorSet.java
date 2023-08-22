@@ -1,5 +1,6 @@
 package me.TahaCheji.itemData.GameArmorData;
 
+import me.TahaCheji.gameUtil.ItemUtil;
 import me.TahaCheji.gameUtil.NBTUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,10 +16,10 @@ import java.util.Objects;
 public abstract class GameArmorSet {
 
     private final String name;
-    private ItemStack helmet;
-    private ItemStack chestplate;
-    private ItemStack leggings;
-    private ItemStack boots;
+    private GameArmor helmet;
+    private GameArmor chestplate;
+    private GameArmor leggings;
+    private GameArmor boots;
     private List<String> description;
     public static GameArmorSet gameArmorSet;
 
@@ -29,10 +30,44 @@ public abstract class GameArmorSet {
 
     public boolean hasFullSet(Player player) {
         PlayerInventory inventory = player.getInventory();
-        return isItemValid(inventory.getHelmet(), helmet) &&
-                isItemValid(inventory.getChestplate(), chestplate) &&
-                isItemValid(inventory.getLeggings(), leggings) &&
-                isItemValid(inventory.getBoots(), boots);
+        int i = 0;
+        if(inventory.getHelmet() != null && helmet != null) {
+            if (ItemUtil.getGameArmor(inventory.getHelmet()) != null) {
+                if(isItemValid(ItemUtil.getGameArmor(inventory.getHelmet()).getName(), helmet.getName())) {
+                    i += 1;
+                }
+            }
+        } else if (inventory.getHelmet() == null && helmet == null) {
+            i += 1;
+        }
+        if(inventory.getChestplate() != null && chestplate != null) {
+            if (ItemUtil.getGameArmor(inventory.getChestplate()) != null) {
+                if(isItemValid(ItemUtil.getGameArmor(inventory.getChestplate()).getName(), chestplate.getName())) {
+                    i += 1;
+                }
+            }
+        } else if (inventory.getChestplate() == null && chestplate == null) {
+            i += 1;
+        }
+        if(inventory.getLeggings() != null && leggings != null) {
+            if (ItemUtil.getGameArmor(inventory.getLeggings()) != null) {
+                if(isItemValid(ItemUtil.getGameArmor(inventory.getLeggings()).getName(), leggings.getName())) {
+                    i += 1;
+                }
+            }
+        } else if (inventory.getLeggings() == null && leggings == null) {
+            i += 1;
+        }
+        if(inventory.getBoots() != null && boots != null) {
+            if (ItemUtil.getGameArmor(inventory.getBoots()) != null) {
+                if(isItemValid(ItemUtil.getGameArmor(inventory.getBoots()).getName(), boots.getName())) {
+                    i += 1;
+                }
+            }
+        } else if (inventory.getBoots() == null && boots == null) {
+            i += 1;
+        }
+        return i == 4;
     }
 
     public  void applyFullSetBonus(Player player) {
@@ -43,10 +78,9 @@ public abstract class GameArmorSet {
 
     protected abstract void performCustomFullSetBonus(Player player);
 
-    private boolean isItemValid(ItemStack itemStack, ItemStack expectedItem) {
-        return itemStack != null &&
-                itemStack.getType() != Material.AIR &&
-                Objects.equals(NBTUtils.getString(itemStack, "GameArmorUUID"), NBTUtils.getString(expectedItem, "GameArmorUUID"));
+    private boolean isItemValid(String i, String s) {
+        return i != null &&
+                Objects.equals(i, s);
     }
 
     public void setDescription(String... description) {
@@ -67,36 +101,36 @@ public abstract class GameArmorSet {
         return name;
     }
 
-    public ItemStack getHelmet() {
-        return helmet;
-    }
-
-    public ItemStack getChestplate() {
-        return chestplate;
-    }
-
-    public ItemStack getLeggings() {
-        return leggings;
-    }
-
-    public ItemStack getBoots() {
-        return boots;
-    }
-
-    public void setHelmet(ItemStack helmet) {
+    public void setHelmet(GameArmor helmet) {
         this.helmet = helmet;
     }
 
-    public void setChestplate(ItemStack chestplate) {
+    public void setChestplate(GameArmor chestplate) {
         this.chestplate = chestplate;
     }
 
-    public void setLeggings(ItemStack leggings) {
+    public void setLeggings(GameArmor leggings) {
         this.leggings = leggings;
     }
 
-    public void setBoots(ItemStack boots) {
+    public void setBoots(GameArmor boots) {
         this.boots = boots;
+    }
+
+    public GameArmor getHelmet() {
+        return helmet;
+    }
+
+    public GameArmor getChestplate() {
+        return chestplate;
+    }
+
+    public GameArmor getLeggings() {
+        return leggings;
+    }
+
+    public GameArmor getBoots() {
+        return boots;
     }
 
     public static GameArmorSet getInstance() {

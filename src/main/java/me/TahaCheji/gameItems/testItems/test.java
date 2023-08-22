@@ -23,7 +23,7 @@ public class test extends GameArmor {
         setHealth(1);
         setArmor(1);
         setArmorSet(testSet.getInstance());
-        testSet.getInstance().setChestplate(getGameArmor());
+        testSet.getInstance().setChestplate(this);
         setGameAbility(new GameArmorAbility("Hump", ItemAbilityType.LEFT_CLICK, 0, "zzzzz"));
     }
 
